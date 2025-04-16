@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.library'
+    alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp")
+}
+
+android {
+    namespace 'com.lib.mobileads'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 23
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation libs.adjust.android
+    implementation libs.adjust.android.webbridge
+    implementation libs.adjust.android.huawei.referrer
+    implementation(libs.play.services.ads)
+    implementation(libs.applovin.sdk)
+}

@@ -28,6 +28,22 @@ class MainActivity : AppCompatActivity() {
 
     private var bannerAd: BannerAd<*>? = null
 
+    private fun getBannerAdConfig(type: AdNetworkType): BannerAdConfig {
+        BannerAdConfig.Builder().apply {
+            setAdSize(BannerSize.Banner)
+            return when (type) {
+                AdNetworkType.ADMOB -> {
+                    setCollapsible(true)
+                    build("ca-app-pub-3940256099942544/6300978111")
+                }
+
+                AdNetworkType.APPLOVIN -> {
+                    build("9999999999999999")
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,11 +54,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        bannerAdManager = BannerAdManager(this, AdNetworkType.ADMOB)
-        val bannerAdConfig =
-            BannerAdConfig.Builder().setAdSize(BannerSize.Banner).setCollapsible(true)
-                .build("ca-app-pub-3940256099942544/6300978111")
+        val type = AdNetworkType.ADMOB
+        bannerAdManager = BannerAdManager(this, type)
+        val bannerAdConfig = getBannerAdConfig(type)
         bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = {
             bannerAd = it
 

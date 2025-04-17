@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        bannerAdManager = BannerAdManagerImpl(this, AdNetworkType.APPLOVIN)
+        bannerAdManager = BannerAdManagerImpl(this, listOf(AdNetworkType.APPLOVIN))
         val bannerAdConfig = getMaxBannerConfig(binding.flBannerAd)
         bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = { result ->
             binding.tvBannerAdIsLoading.visibility = View.GONE

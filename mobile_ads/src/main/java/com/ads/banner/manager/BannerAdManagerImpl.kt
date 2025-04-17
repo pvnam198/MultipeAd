@@ -12,7 +12,7 @@ import com.google.android.gms.ads.AdView
 
 class BannerAdManagerImpl(
     private val context: Context,
-    private val adNetworkType: AdNetworkType
+    private val adNetworkPriorities: List<AdNetworkType>
 ) : BannerAdManager {
 
     override fun fetchBannerAd(
@@ -20,13 +20,32 @@ class BannerAdManagerImpl(
         onSuccess: (BannerResult) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        when (adNetworkType) {
-            AdNetworkType.ADMOB -> {
-                loadAdmobBanner(config, onSuccess, onFailure)
-            }
 
+        val iterator = adNetworkPriorities.iterator()
+        tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+    }
+
+    private fun tryNextAdNetwork(
+        iterator: Iterator<AdNetworkType>,
+        config: BannerAdConfig,
+        onSuccess: (BannerResult) -> Unit,
+        onFailure: (String?) -> Unit
+    ) {
+        if (!iterator.hasNext()) {
+            onFailure("All ad networks failed")
+            return
+        }
+
+        when (iterator.next()) {
+            AdNetworkType.ADMOB -> {
+                loadAdmobBanner(config, onSuccess) { error ->
+                    tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+                }
+            }
             AdNetworkType.APPLOVIN -> {
-                loadApplovinBanner(config, onSuccess, onFailure)
+                loadApplovinBanner(config, onSuccess) { error ->
+                    tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+                }
             }
         }
     }

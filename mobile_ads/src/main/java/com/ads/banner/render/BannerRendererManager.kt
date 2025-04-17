@@ -15,7 +15,7 @@ class BannerRendererManager {
     }
 
     fun render(bannerResult: BannerResult) {
-        renderers.forEach { it.render(bannerResult) }
+        renderers.find { it.canRender(bannerResult) }?.render(bannerResult)
     }
 
 }

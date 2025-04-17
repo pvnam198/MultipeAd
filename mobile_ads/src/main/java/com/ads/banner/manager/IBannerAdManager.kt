@@ -1,7 +1,7 @@
 package com.ads.banner.manager
 
 import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.banner.BannerAdConfig
 
 interface IBannerAdManager {
 

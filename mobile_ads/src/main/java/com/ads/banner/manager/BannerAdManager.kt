@@ -5,7 +5,7 @@ import com.ads.AdNetworkType
 import com.ads.admob.banner.AdmobBannerLoader
 import com.ads.applovin.banner.ApplovinBannerLoader
 import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.banner.BannerAdConfig
 
 class BannerAdManager(
     private val context: Context,

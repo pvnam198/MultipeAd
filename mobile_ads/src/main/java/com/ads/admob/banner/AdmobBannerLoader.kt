@@ -4,7 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import com.ads.banner.loader.BannerLoader
 import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.banner.AdmobBannerConfig
+import com.ads.banner.model.banner.BannerAdConfig
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -21,6 +22,12 @@ class AdmobBannerLoader(
         onSuccess: (BannerAd<AdView>) -> Unit,
         onFailure: (String?) -> Unit
     ) {
+
+        if (config !is AdmobBannerConfig) {
+            onFailure("BannerAdConfig is must be AdmobBannerConfig")
+            return
+        }
+
         val adView = AdView(context)
         adView.setAdSize(AdSize(config.adSize.width, config.adSize.height))
         adView.adUnitId = config.adUnitId

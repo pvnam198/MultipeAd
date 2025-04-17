@@ -2,6 +2,7 @@ package com.wz.multipead
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,12 +11,16 @@ import com.ads.AdNetworkType
 import com.ads.banner.manager.BannerAdManager
 import com.ads.banner.manager.IBannerAdManager
 import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerAdConfig
 import com.ads.banner.model.BannerDestroyable
 import com.ads.banner.model.BannerPauseAble
 import com.ads.banner.model.BannerResumeAble
-import com.ads.banner.model.BannerSize
+import com.ads.banner.model.banner.AdmobBannerConfig
+import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.banner.MaxBannerConfig
 import com.applovin.mediation.ads.MaxAdView
+import com.applovin.sdk.AppLovinMediationProvider
+import com.applovin.sdk.AppLovinSdk
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.google.android.gms.ads.AdView
 import com.wz.multipead.databinding.ActivityMainBinding
 
@@ -28,24 +33,25 @@ class MainActivity : AppCompatActivity() {
 
     private var bannerAd: BannerAd<*>? = null
 
-    private fun getBannerAdConfig(type: AdNetworkType): BannerAdConfig {
-        BannerAdConfig.Builder().apply {
-            setAdSize(BannerSize.Banner)
-            return when (type) {
-                AdNetworkType.ADMOB -> {
-                    setCollapsible(true)
-                    build("ca-app-pub-3940256099942544/6300978111")
-                }
-
-                AdNetworkType.APPLOVIN -> {
-                    build("9999999999999999")
-                }
-            }
-        }
+    private fun getAdmobBannerConfig(): BannerAdConfig {
+        return AdmobBannerConfig(adUnitId = "ca-app-pub-3940256099942544/6300978111")
     }
+
+    private fun getMaxBannerConfig(parentView: ViewGroup): BannerAdConfig {
+        return MaxBannerConfig(adUnitId = "2e627e3499187e00", parentView = parentView)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val initConfig = AppLovinSdkInitializationConfiguration.builder(
+            "sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU",
+            this
+        ).setMediationProvider(AppLovinMediationProvider.MAX)
+            .build()
+        AppLovinSdk.getInstance(this).initialize(initConfig) { sdkConfig -> }
+
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -54,9 +60,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val type = AdNetworkType.ADMOB
-        bannerAdManager = BannerAdManager(this, type)
-        val bannerAdConfig = getBannerAdConfig(type)
+        bannerAdManager = BannerAdManager(this, AdNetworkType.APPLOVIN)
+        val bannerAdConfig = getMaxBannerConfig(binding.flBannerAd)
         bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = {
             bannerAd = it
 

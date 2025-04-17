@@ -9,8 +9,7 @@
     <FrameLayout
         android:id="@+id/fl_banner_ad"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="56dp">
+        android:layout_height="56dp">
 
         <TextView
             android:id="@+id/tv_banner_ad_is_loading"

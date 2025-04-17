@@ -1,9 +1,12 @@
 package com.ads.applovin.banner
 
 import android.content.Context
+import android.util.Log
+import android.widget.FrameLayout
 import com.ads.banner.loader.BannerLoader
 import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.banner.MaxBannerConfig
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
@@ -13,37 +16,61 @@ class ApplovinBannerLoader(
     private val context: Context
 ) : BannerLoader<BannerAd<MaxAdView>> {
 
-
     override fun fetchBannerAd(
         config: BannerAdConfig,
         onSuccess: (BannerAd<MaxAdView>) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        val adView = MaxAdView(config.adUnitId, context)
-        adView.setListener(object : MaxAdViewAdListener {
-            override fun onAdLoaded(p0: MaxAd) {
-                onSuccess(ApplovinBanner(adView))
-            }
+        if (config !is MaxBannerConfig) {
+            onFailure("BannerAdConfig must be of type MaxBannerConfig")
+            return
+        }
 
-            override fun onAdDisplayed(p0: MaxAd) {}
+        Log.d("log_debug_123", "fetchBannerAd: ")
+        val adView = MaxAdView(config.adUnitId, context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
 
-            override fun onAdHidden(p0: MaxAd) {}
+            setListener(object : MaxAdViewAdListener {
+                override fun onAdLoaded(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdLoaded")
+                    onSuccess(ApplovinBanner(this@apply))
+                }
 
-            override fun onAdClicked(p0: MaxAd) {}
+                override fun onAdDisplayed(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdDisplayed")
+                }
 
-            override fun onAdLoadFailed(p0: String, p1: MaxError) {
-                val msgBuilder = StringBuilder()
-                msgBuilder.append(p0).append(", ").append(p1.message)
-                onFailure(msgBuilder.toString())
-            }
+                override fun onAdHidden(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdHidden")
+                }
 
-            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {}
+                override fun onAdClicked(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdClicked")
+                }
 
-            override fun onAdExpanded(p0: MaxAd) {}
+                override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                    Log.d("log_debug_123", "onAdLoadFailed: $p0, ${p1.message}")
+                    onFailure("$p0, ${p1.message}")
+                }
 
-            override fun onAdCollapsed(p0: MaxAd) {}
+                override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                    Log.d("log_debug_123", "onAdDisplayFailed: ${p1.message}")
+                }
 
-        })
+                override fun onAdExpanded(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdExpanded")
+                }
+
+                override fun onAdCollapsed(p0: MaxAd) {
+                    Log.d("log_debug_123", "onAdCollapsed")
+                }
+            })
+        }
+
+        config.parentView.addView(adView)
         adView.loadAd()
     }
 

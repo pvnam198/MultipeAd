@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
+    id("applovin-quality-service")
+}
+
+applovin {
+    apiKey = "ZgB2G1ybd9tRrTQn_eGtnzPDtLNAK9hiRuNiTi1EM1z77lnbuazdrKUiak2sXSOGDkAhVaO0xGwaFrbbBmhM5x"
 }
 
 android {

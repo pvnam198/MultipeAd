@@ -56,7 +56,9 @@ class MainActivity : AppCompatActivity() {
             binding.flBannerAd.visibility = View.VISIBLE
             val bannerRendererManager = BannerRendererManager()
             bannerRendererManager.registerRenderer(
-                AdmobBannerRenderer(onRender = { binding.flBannerAd.addView(it) })
+                AdmobBannerRenderer(onRender = {
+                    binding.flBannerAd.addView(it)
+                })
             )
             bannerRendererManager.registerRenderer(
                 ApplovinBannerRenderer(onRender = { binding.flBannerAd.addView(it) })
@@ -82,7 +84,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         (currentBanner as? BannerDestroyable)?.destroy()
-
     }
 
 }

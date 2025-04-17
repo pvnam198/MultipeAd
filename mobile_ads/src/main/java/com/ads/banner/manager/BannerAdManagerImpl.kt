@@ -6,10 +6,6 @@ import com.ads.admob.banner.AdmobBannerLoader
 import com.ads.admob.banner.AdmobBannerResult
 import com.ads.applovin.banner.ApplovinBannerLoader
 import com.ads.applovin.banner.ApplovinBannerResult
-import com.ads.banner.model.banner.BannerAd
-import com.ads.banner.model.banner.BannerDestroyable
-import com.ads.banner.model.banner.BannerPauseAble
-import com.ads.banner.model.banner.BannerResumeAble
 import com.ads.banner.model.banner.BannerAdConfig
 import com.ads.banner.model.banner.BannerResult
 import com.google.android.gms.ads.AdView
@@ -40,9 +36,9 @@ class BannerAdManagerImpl(
         onSuccess: (BannerResult) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        ApplovinBannerLoader().fetchBannerAd(config, onSuccess = {
+        ApplovinBannerLoader().fetchBannerAd(config, onSuccess = { ad ->
             val applovinBannerResult =
-                ApplovinBannerResult(it.ad, onDestroy = { (it as? BannerDestroyable)?.destroy() })
+                ApplovinBannerResult(ad, onDestroy = { ad.destroy() })
             onSuccess(applovinBannerResult)
         }, onFailure)
     }
@@ -58,11 +54,11 @@ class BannerAdManagerImpl(
         }, onFailure)
     }
 
-    private fun getAdmobBannerResult(bannerAd: BannerAd<AdView>): AdmobBannerResult =
+    private fun getAdmobBannerResult(bannerAd: AdView): AdmobBannerResult =
         AdmobBannerResult(
-            adView = bannerAd.ad,
-            onResume = { (bannerAd as? BannerResumeAble)?.resume() },
-            onPause = { (bannerAd as? BannerPauseAble)?.pause() },
-            onDestroy = { (bannerAd as? BannerDestroyable)?.destroy() }
+            adView = bannerAd,
+            onResume = { bannerAd.resume() },
+            onPause = { bannerAd.pause() },
+            onDestroy = { bannerAd.destroy() }
         )
 }

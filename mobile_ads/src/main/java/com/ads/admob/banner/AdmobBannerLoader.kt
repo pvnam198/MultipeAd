@@ -3,8 +3,6 @@ package com.ads.admob.banner
 import android.content.Context
 import android.os.Bundle
 import com.ads.banner.loader.BannerLoader
-import com.ads.banner.model.banner.BannerAd
-import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.banner.model.banner.BannerAdConfig
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
@@ -15,14 +13,14 @@ import com.google.android.gms.ads.LoadAdError
 
 class AdmobBannerLoader(
     private val context: Context
-) : BannerLoader<BannerAd<AdView>> {
+) : BannerLoader<AdView> {
+
 
     override fun fetchBannerAd(
         config: BannerAdConfig,
-        onSuccess: (BannerAd<AdView>) -> Unit,
+        onSuccess: (AdView) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-
         if (config !is AdmobBannerConfig) {
             onFailure("BannerAdConfig is must be AdmobBannerConfig")
             return
@@ -33,7 +31,7 @@ class AdmobBannerLoader(
         adView.adUnitId = config.adUnitId
         adView.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                onSuccess(AdmobBanner(adView))
+                onSuccess(adView)
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {

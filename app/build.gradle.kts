@@ -56,7 +56,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.play.services.ads)
-    implementation(libs.applovin.sdk)
     implementation(project(":mobile_ads"))
 }

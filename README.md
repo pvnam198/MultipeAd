@@ -1,350 +1,194 @@
-# 📢 Ads Initialization - Hệ thống khởi tạo quảng cáo
+# Multipead - Multi-Platform Ad Integration
 
-## ✅ Mục tiêu
-Tổ chức lại quá trình **khởi tạo quảng cáo** trong ứng dụng Android một cách rõ ràng, có cấu trúc, dễ mở rộng và bảo trì.  
-Hỗ trợ nhiều ad network như: **AppLovin**, **AdMob**, v.v.
+`Multipead` là một ứng dụng Android mẫu, tích hợp nhiều nền tảng quảng cáo (Admob và AppLovin) vào một hệ thống quản lý quảng cáo linh hoạt. Dự án sử dụng các **design pattern** như Strategy, Facade, và Composite để hỗ trợ việc tải và hiển thị quảng cáo banner từ nhiều nhà cung cấp một cách dễ dàng và hiệu quả.
 
----
+## Mục lục
 
-## 🔧 Cấu trúc hệ thống
+- [Tổng quan](#tổng-quan)
+- [Yêu cầu](#yêu-cầu)
+- [Cài đặt](#cài-đặt)
+- [Cấu trúc dự án](#cấu-trúc-dự-án)
+- [Cách sử dụng](#cách-sử-dụng)
+  - [Khởi tạo quảng cáo](#khởi-tạo-quảng-cáo)
+  - [Tích hợp BannerAdManager](#tích-hợp-banneradmanager)
+- [Các thành phần chính](#các-thành-phần-chính)
+- [Góp ý và hỗ trợ](#góp-ý-và-hỗ-trợ)
 
-### 1. `AdInitializer` – Interface cơ bản
+## Tổng quan
 
-```kotlin
-interface AdInitializer {
-    fun initialize()
-}
-```
+Dự án `Multipead` cung cấp một hệ thống quản lý quảng cáo banner, cho phép tích hợp và chuyển đổi giữa các nền tảng quảng cáo (Admob và AppLovin) một cách liền mạch. Các tính năng chính bao gồm:
 
-### 2. Các `AdInitializer` cụ thể
+- **Tích hợp đa nền tảng**: Hỗ trợ cả Admob và AppLovin với cấu hình riêng biệt.
+- **Quản lý linh hoạt**: Sử dụng `BannerAdManager` để tải quảng cáo theo thứ tự ưu tiên, thử nền tảng tiếp theo nếu một nền tảng thất bại.
+- **Hiển thị quảng cáo**: Sử dụng `BannerRendererManager` để hiển thị quảng cáo phù hợp với từng nền tảng.
+- **Quản lý lifecycle**: Hỗ trợ các hành động `resume`, `pause`, và `destroy` để đảm bảo quảng cáo hoạt động đúng trong vòng đời của Activity.
 
-#### AppLovin (có hỗ trợ Test Device IDs)
+Dự án được viết bằng **Kotlin** và sử dụng các thư viện Android tiêu chuẩn, cùng với SDK của Admob và AppLovin.
 
-```kotlin
-class AppLovinAdInitializer(
-    private val context: Context,
-    private val sdkKey: String,
-    private val testDeviceIds: List<String> = emptyList(),
-    private val onInitializeComplete: (() -> Unit)? = null
-) : AdInitializer {
+## Yêu cầu
 
-    override fun initialize() {
-        val initConfig =
-            AppLovinSdkInitializationConfiguration.builder(sdkKey)
-                .setMediationProvider(AppLovinMediationProvider.MAX)
-                .setTestDeviceAdvertisingIds(testDeviceIds)
-                .build()
+Để chạy dự án, bạn cần:
 
-        AppLovinSdk.getInstance(context).initialize(initConfig) { sdkConfig ->
-            onInitializeComplete?.invoke()
-        }
-    }
-}
-```
+- **Android Studio**: Phiên bản Arctic Fox (2020.3.1) hoặc mới hơn.
+- **Kotlin**: Phiên bản 1.5 hoặc cao hơn.
+- **SDK Android**: API 21 (Lollipop) trở lên.
+- **Thư viện phụ thuộc**:
+  - Google Mobile Ads SDK (`com.google.android.gms:play-services-ads`)
+  - AppLovin MAX SDK (`com.applovin:applovin-sdk`)
+- **Mạng Internet**: Để tải và hiển thị quảng cáo.
 
-#### AdMob
+## Cài đặt
 
-```kotlin
-class AdMobAdInitializer(
-    private val context: Context,
-    private val onInitializeComplete: (() -> Unit)? = null
-) : AdInitializer {
-    override fun initialize() {
-        MobileAds.initialize(context) {
-            onInitializeComplete?.invoke()
-        }
-    }
-}
-```
+1. **Clone repository**:
+   ```bash
+   git clone <repository-url>
+   ```
 
-### 3. `AdInitializationManager` – Giao diện quản lý chính
+2. **Mở dự án trong Android Studio**:
+   - Mở Android Studio và chọn `Open an existing project`.
+   - Chọn thư mục gốc của dự án `multipead`.
 
-```kotlin
-interface AdInitializationManager {
-    fun initialize()
-}
-```
+3. **Thêm phụ thuộc**:
+   Trong tệp `build.gradle` (module app), đảm bảo các phụ thuộc sau được thêm:
+   ```gradle
+   dependencies {
+       implementation 'com.google.android.gms:play-services-ads:22.6.0'
+       implementation 'com.applovin:applovin-sdk:12.4.1'
+   }
+   ```
 
-### 4. `AdInitializationManagerImpl` – Quản lý danh sách các network
+4. **Cấu hình Manifest**:
+   Đảm bảo tệp `AndroidManifest.xml` có quyền truy cập Internet:
+   ```xml
+   <uses-permission android:name="android.permission.INTERNET"/>
+   ```
 
-```kotlin
-class AdInitializationManagerImpl(
-    private val initializers: List<AdInitializer>
-) : AdInitializationManager {
+5. **Đồng bộ dự án**:
+   Nhấn `Sync Project with Gradle Files` trong Android Studio để tải các phụ thuộc.
 
-    override fun initialize() {
-        initializers.forEach { it.initialize() }
-    }
+6. **Cấu hình khóa quảng cáo**:
+   - **Admob**: Cập nhật `adUnitId` trong `AdmobBannerConfig` (file `MainActivity.kt`) với ID quảng cáo  thật của bạn.
+   - **AppLovin**: Cập nhật `sdkKey` và `adUnitId` trong `App.kt` và `MainActivity.kt` với thông tin từ tài khoản AppLovin của bạn.
 
-}
-```
+## Cấu trúc dự án
 
----
+Dự án được tổ chức theo các package chính:
 
-## 🚀 Cách **KHỞI TẠO**
+- **`com.wz.multipead`**:
+  - `App.kt`: Khởi tạo ứng dụng và các SDK quảng cáo (Admob, AppLovin).
+  - `MainActivity.kt`: Activity chính, nơi tích hợp và hiển thị quảng cáo banner.
+- **`com.ads`**:
+  - `AdInitializationManager.kt`: Quản lý khởi tạo các SDK quảng cáo.
+  - `AdNetworkType.kt`: Enum định nghĩa các nền tảng quảng cáo (Admob, AppLovin).
+- **`com.ads.admob`**: Chứa các lớp liên quan đến Admob (loader, renderer, config, result).
+- **`com.ads.applovin`**: Chứa các lớp liên quan đến AppLovin (loader, renderer, config, result).
+- **`com.ads.banner`**:
+  - `loader`: Interface và triển khai để tải quảng cáo.
+  - `manager`: `BannerAdManager` để quản lý việc tải quảng cáo.
+  - `model`: Các model như `BannerAdConfig`, `BannerResult`, `BannerSize`.
+  - `render`: `BannerRenderer` và `BannerRendererManager` để hiển thị quảng cáo.
 
-Thực hiện trong `Application`:
+## Cách sử dụng
 
-```kotlin
-class App : Application() {
+### Khởi tạo quảng cáo
 
-    override fun onCreate() {
-        super.onCreate()
-        initializeAds()
-    }
+Quảng cáo được khởi tạo trong `App.kt` thông qua `AdInitializationManager`. Để thêm một nền tảng quảng cáo mới:
 
-    private fun initializeAds() {
-        val configReader: ConfigReader = ConfigReaderImpl(this)
-        val initializers = ArrayList<AdInitializer>()
-        getMaxAdInitializer(configReader)?.let { initializers.add(it) }
+1. Tạo một class triển khai `AdInitializer` (tương tự `AdMobAdInitializer` hoặc `ApplovinAdInitializer`).
+2. Thêm initializer vào danh sách trong `App.kt`:
+   ```kotlin
+   initializers.add(YourNewAdInitializer(context))
+   ```
+3. Gọi `AdInitializationManagerImpl(initializers).initialize()`.
 
-        val adMobAdInitializer = AdMobAdInitializer(context = this)
-        initializers.add(adMobAdInitializer)
+### Tích hợp BannerAdManager
 
-        val adInitializationManager =
-            AdInitializationManagerImpl(initializers)
-        adInitializationManager.initialize()
-    }
+Để hiển thị quảng cáo banner trong một Activity:
 
-    private fun getMaxAdInitializer(configReader: ConfigReader): AdInitializer? {
-        val sdkKey = configReader.readProperty("applovin.sdk.key") ?: return null
+1. **Tạo danh sách cặp AdNetworkType và BannerAdConfig**:
+   ```kotlin
+   val adNetworkConfigs = listOf(
+       AdNetworkType.ADMOB to AdmobBannerConfig(adUnitId = "your_admob_ad_unit_id"),
+       AdNetworkType.APPLOVIN to ApplovinBannerConfig(
+           adUnitId = "your_applovin_ad_unit_id",
+           parentView = binding.flBannerAd
+       )
+   )
+   ```
+   - Danh sách này xác định thứ tự ưu tiên: Admob được thử trước, nếu thất bại sẽ thử AppLovin.
 
-        val testDeviceIds = configReader.readProperty("applovin.test.device.ids")
-            ?.split(",")
-            ?.map { it.trim() }
-            .orEmpty()
+2. **Khởi tạo BannerAdManager**:
+   ```kotlin
+   bannerAdManager = BannerAdManagerImpl(this, adNetworkConfigs)
+   ```
 
-        return AppLovinAdInitializer(
-            context = this,
-            sdkKey = sdkKey,
-            testDeviceIds = testDeviceIds
-        )
-    }
-}
-```
+3. **Tải và hiển thị quảng cáo**:
+   ```kotlin
+   bannerAdManager.fetchBannerAd(
+       onSuccess = { result ->
+           binding.tvBannerAdIsLoading.visibility = View.GONE
+           binding.flBannerAd.visibility = View.VISIBLE
+           val bannerRendererManager = BannerRendererManager()
+           bannerRendererManager.registerRenderer(
+               AdmobBannerRenderer { binding.flBannerAd.addView(it) }
+           )
+           bannerRendererManager.registerRenderer(
+               ApplovinBannerRenderer { binding.flBannerAd.addView(it) }
+           )
+           bannerRendererManager.render(result)
+           currentBanner = result
+       },
+       onFailure = {
+           binding.flBannerAd.visibility = View.GONE
+       }
+   )
+   ```
+   - Hệ thống sẽ thử tải quảng cáo từ Admob trước. Nếu thành công, quảng cáo được hiển thị và quá trình dừng lại. Nếu thất bại, nó thử AppLovin. Nếu cả hai thất bại, khung quảng cáo bị ẩn.
 
----
+4. **Quản lý lifecycle**:
+   Đảm bảo gọi các phương thức lifecycle trong Activity để quản lý quảng cáo đúng cách:
+   ```kotlin
+   override fun onResume() {
+       super.onResume()
+       (currentBanner as? BannerResumeAble)?.resume()
+   }
+   
+   override fun onPause() {
+       super.onPause()
+       (currentBanner as? BannerPauseAble)?.pause()
+   }
+   
+   override fun onDestroy() {
+       super.onDestroy()
+       (currentBanner as? BannerDestroyable)?.destroy()
+   }
+   ```
 
-## ⚙️ Cấu hình SDK và plugin
+## Các thành phần chính
 
-### 1. Khai báo trong `libs.versions.toml`
+1. **BannerAdManager**:
+   - Quản lý việc tải quảng cáo từ nhiều nền tảng theo thứ tự ưu tiên.
+   - Nhận danh sách cặp `(AdNetworkType, BannerAdConfig)` để đảm bảo mỗi nền tảng sử dụng config đúng.
+   - Thử tải quảng cáo từ nền tảng đầu tiên trong danh sách; nếu thất bại, chuyển sang nền tảng tiếp theo.
 
-```toml
-[versions]
-playServicesAds = "24.2.0"
-applovinSdk = "13.2.0"
-applovinqualityservicegradleplugin = "5.8.2"
+2. **BannerRendererManager**:
+   - Hiển thị quảng cáo bằng cách chọn renderer phù hợp (`AdmobBannerRenderer` hoặc `ApplovinBannerRenderer`) dựa trên loại `BannerResult`.
+   - Sử dụng phương thức `canRender` để kiểm tra khả năng hiển thị.
 
-[libraries]
-play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
-applovin-sdk = { module = "com.applovin:applovin-sdk", version.ref = "applovinSdk" }
-applovinqualityservicegradleplugin = { module = "com.applovin.quality:AppLovinQualityServiceGradlePlugin", version.ref = "applovinqualityservicegradleplugin" }
+3. **BannerLoader**:
+   - Interface chung cho các loader (`AdmobBannerLoader`, `ApplovinBannerLoader`).
+   - Mỗi loader chịu trách nhiệm tải quảng cáo từ nền tảng tương ứng.
 
-[plugins]
-android-application = { id = "com.android.application", version = "8.9.1" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.1.20" }
-```
+4. **BannerResult**:
+   - Interface biểu diễn kết quả quảng cáo, với các triển khai cụ thể như `AdmobBannerResult` và `ApplovinBannerResult`.
+   - Hỗ trợ các hành động lifecycle (`resume`, `pause`, `destroy`).
 
-### 2. Sử dụng trong `build.gradle.kts` của app module
+## Góp ý và hỗ trợ
 
-```kotlin
-plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("applovin-quality-service")
-}
-
-applovin {
-    apiKey = "your_applovin_api_key"
-}
-
-dependencies {
-    implementation(libs.play.services.ads)
-    implementation(libs.applovin.sdk)
-}
-```
-
-### 3. Root `build.gradle.kts`
-
-```kotlin
-buildscript {
-    repositories {
-        maven { url = uri("https://artifacts.applovin.com/android") }
-    }
-    dependencies {
-        classpath(libs.applovinqualityservicegradleplugin)
-    }
-}
-```
-
----
-
-## 🛠️ Cấu hình `local.properties` để bảo mật SDK Key và Test Device IDs
-
-Thay vì hardcode vào source code, bạn nên cấu hình các giá trị nhạy cảm trong `local.properties` (đã mặc định bị ignore bởi Git):
-
-### 🔹 Bước 1: Mở hoặc tạo file `local.properties` tại thư mục gốc project
-
-```properties
-# local.properties
-
-applovin.sdk.key=your_real_applovin_sdk_key_here
-applovin.test.device.ids=your_test_device_id_here
-```
-
-> Có thể thêm nhiều thiết bị test, phân cách bằng dấu `,`:
-```properties
-applovin.test.device.ids=abc-123,def-456
-```
+- **Báo lỗi**: Nếu gặp vấn đề, vui lòng tạo issue trên repository với mô tả chi tiết.
+- **Đóng góp**: Fork repository, tạo pull request với các cải tiến hoặc sửa lỗi.
+- **Liên hệ**: Liên hệ qua email hoặc các kênh hỗ trợ của dự án.
 
 ---
 
-### 🔹 Bước 2: Tạo interface `ConfigReader` và implementation `ConfigReaderImpl`
-
-```kotlin
-// interface ConfigReader.kt
-interface ConfigReader {
-    fun readProperty(key: String): String?
-}
-```
-
-```kotlin
-// implementation ConfigReaderImpl.kt
-class ConfigReaderImpl(
-    private val context: Context
-) : ConfigReader {
-
-    override fun readProperty(key: String): String? {
-        return try {
-            val file = File(findRootDir(context), "local.properties")
-            if (!file.exists()) return null
-            val properties = Properties().apply { load(file.inputStream()) }
-            properties.getProperty(key)
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    private fun findRootDir(context: Context): File {
-        var dir = context.filesDir
-        while (dir.parentFile?.name != null && dir.parentFile?.name != "src") {
-            dir = dir.parentFile!!
-        }
-        return dir.parentFile ?: context.filesDir
-    }
-}
-```
-
----
-
-## 🧪 Lấy Advertising ID để dùng làm test ID
-
-```kotlin
-val thread = Thread(object : Runnable {
-    override fun run() {
-        val info = AdvertisingIdClient.getAdvertisingIdInfo(applicationContext)
-        val id = info.id
-        Log.d("TestAdId", "Advertising ID: $id")
-    }
-})
-thread.start()
-```
-
----
-
-## 🧩 Mở rộng
-
-- Khởi tạo quảng cáo có điều kiện theo BuildConfig, Firebase hoặc user đã mua VIP.
-- Có thể kết hợp với Hilt hoặc Koin để inject `AdInitializer` hoặc `ConfigReader`.
----
-
-## 📢 Hướng dẫn thêm Banner Ad vào Activity
-
-### 🧩 Cách tích hợp
-
-Trong `MainActivity`, bạn có thể cấu hình Banner Ad như sau:
-
-```kotlin
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var bannerAdManager: IBannerAdManager
-    private var bannerAd: BannerAd<*>? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Khởi tạo ad manager với network tương ứng
-        bannerAdManager = BannerAdManager(this, AdNetworkType.APPLOVIN)
-
-        val bannerAdConfig = MaxBannerConfig(
-            adUnitId = "your_applovin_banner_id",
-            parentView = binding.flBannerAd
-        )
-
-        // Gọi load banner
-        bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = {
-            bannerAd = it
-            val adView = it.ad
-            if (adView is View) {
-                binding.flBannerAd.addView(adView)
-            }
-            binding.tvBannerAdIsLoading.visibility = View.GONE
-            binding.flBannerAd.visibility = View.VISIBLE
-        }, onFailure = {
-            binding.tvBannerAdIsLoading.text = "Load failed: $it"
-            binding.flBannerAd.visibility = View.GONE
-        })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (bannerAd as? BannerResumeAble)?.resume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        (bannerAd as? BannerPauseAble)?.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (bannerAd as? BannerDestroyable)?.destroy()
-    }
-}
-```
-
----
-
-### 🧱 Các bước triển khai:
-
-1. Tạo `BannerAdManager` với loại network: `AdNetworkType.APPLOVIN` hoặc `ADMOB`.
-2. Gọi `fetchBannerAd(...)` để load banner.
-3. Nhúng view banner vào `ViewGroup` như `FrameLayout`, ví dụ: `binding.flBannerAd`.
-4. Gọi `.pause()`, `.resume()`, `.destroy()` theo vòng đời của Activity nếu hỗ trợ.
-
----
-
-### 💡 Gợi ý `layout/activity_main.xml`
-
-```xml
-<FrameLayout
-    android:id="@+id/fl_banner_ad"
-    android:layout_width="match_parent"
-    android:layout_height="56dp">
-
-    <TextView
-        android:id="@+id/tv_banner_ad_is_loading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Banner ad is loading..." />
-
-</FrameLayout>
-```
-
----
-
-Bạn có thể mở rộng hệ thống này để hỗ trợ banner linh hoạt với nhiều vị trí, nhiều network, và kiểm soát refresh/timeout tự động.
+**Lưu ý**: Đảm bảo thay thế `adUnitId` và `sdkKey` bằng các giá trị thật từ tài khoản Admob và AppLovin của bạn trước khi chạy ứng dụng.

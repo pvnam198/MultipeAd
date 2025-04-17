@@ -1,9 +1,9 @@
 package com.ads.admob.banner
 
-import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerDestroyable
-import com.ads.banner.model.BannerPauseAble
-import com.ads.banner.model.BannerResumeAble
+import com.ads.banner.model.banner.BannerAd
+import com.ads.banner.model.banner.BannerDestroyable
+import com.ads.banner.model.banner.BannerPauseAble
+import com.ads.banner.model.banner.BannerResumeAble
 import com.google.android.gms.ads.AdView
 
 class AdmobBanner(

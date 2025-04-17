@@ -2,7 +2,7 @@ package com.ads.admob.banner
 
 import android.view.View
 import com.ads.banner.model.banner.BannerResult
-import com.ads.banner.render.BannerRenderer
+import com.ads.banner.model.banner.render.BannerRenderer
 
 class AdmobBannerRenderer(
     private val onRender: (View) -> Unit

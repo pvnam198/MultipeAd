@@ -4,7 +4,7 @@ import android.app.Application
 import com.ads.AdInitializationManagerImpl
 import com.ads.AdInitializer
 import com.ads.admob.AdMobAdInitializer
-import com.ads.applovin.AppLovinAdInitializer
+import com.ads.applovin.ApplovinAdInitializer
 
 class App : Application() {
 
@@ -31,7 +31,7 @@ class App : Application() {
             "sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU"
         val testDeviceIds = listOf("7ce2ea31-04ca-4dbf-93b0-bc98e690e3b4")
 
-        return AppLovinAdInitializer(
+        return ApplovinAdInitializer(
             context = this,
             sdkKey = sdkKey,
             testDeviceIds = testDeviceIds

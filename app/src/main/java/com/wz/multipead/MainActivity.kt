@@ -10,23 +10,23 @@ import androidx.core.view.WindowInsetsCompat
 import com.ads.AdNetworkType
 import com.ads.admob.banner.AdmobBannerRenderer
 import com.ads.applovin.banner.ApplovinBannerRenderer
+import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.manager.BannerAdManager
-import com.ads.banner.manager.IBannerAdManager
-import com.ads.banner.model.BannerDestroyable
-import com.ads.banner.model.BannerPauseAble
-import com.ads.banner.model.BannerResumeAble
-import com.ads.banner.model.banner.AdmobBannerConfig
+import com.ads.banner.model.banner.BannerDestroyable
+import com.ads.banner.model.banner.BannerPauseAble
+import com.ads.banner.model.banner.BannerResumeAble
+import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.banner.model.banner.BannerAdConfig
 import com.ads.banner.model.banner.BannerResult
-import com.ads.banner.model.banner.MaxBannerConfig
-import com.ads.banner.render.BannerRendererManager
+import com.ads.applovin.banner.ApplovinBannerConfig
+import com.ads.banner.model.banner.render.BannerRendererManager
 import com.wz.multipead.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var bannerAdManager: IBannerAdManager
+    private lateinit var bannerAdManager: BannerAdManager
 
     private var currentBanner: BannerResult? = null
 
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getMaxBannerConfig(parentView: ViewGroup): BannerAdConfig {
-        return MaxBannerConfig(adUnitId = "2e627e3499187e00", parentView = parentView)
+        return ApplovinBannerConfig(adUnitId = "2e627e3499187e00", parentView = parentView)
     }
 
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        bannerAdManager = BannerAdManager(this, AdNetworkType.APPLOVIN)
+        bannerAdManager = BannerAdManagerImpl(this, AdNetworkType.APPLOVIN)
         val bannerAdConfig = getMaxBannerConfig(binding.flBannerAd)
         bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = { result ->
             binding.tvBannerAdIsLoading.visibility = View.GONE

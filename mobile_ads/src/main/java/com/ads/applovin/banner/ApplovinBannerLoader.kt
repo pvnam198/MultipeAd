@@ -2,9 +2,8 @@ package com.ads.applovin.banner
 
 import android.widget.FrameLayout
 import com.ads.banner.loader.BannerLoader
-import com.ads.banner.model.BannerAd
+import com.ads.banner.model.banner.BannerAd
 import com.ads.banner.model.banner.BannerAdConfig
-import com.ads.banner.model.banner.MaxBannerConfig
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
@@ -18,7 +17,7 @@ class ApplovinBannerLoader(
         onSuccess: (BannerAd<MaxAdView>) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        if (config !is MaxBannerConfig) {
+        if (config !is ApplovinBannerConfig) {
             onFailure("BannerAdConfig must be of type MaxBannerConfig")
             return
         }

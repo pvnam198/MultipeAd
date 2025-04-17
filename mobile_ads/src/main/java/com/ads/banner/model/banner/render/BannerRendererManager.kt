@@ -1,4 +1,4 @@
-package com.ads.banner.render
+package com.ads.banner.model.banner.render
 
 import com.ads.banner.model.banner.BannerResult
 

@@ -6,7 +6,7 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 
-class AppLovinAdInitializer(
+class ApplovinAdInitializer(
     private val context: Context,
     private val sdkKey: String,
     private val testDeviceIds: List<String> = emptyList(),

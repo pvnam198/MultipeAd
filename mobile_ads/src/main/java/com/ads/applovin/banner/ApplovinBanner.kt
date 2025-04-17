@@ -1,7 +1,7 @@
 package com.ads.applovin.banner
 
-import com.ads.banner.model.BannerAd
-import com.ads.banner.model.BannerDestroyable
+import com.ads.banner.model.banner.BannerAd
+import com.ads.banner.model.banner.BannerDestroyable
 import com.applovin.mediation.ads.MaxAdView
 
 class ApplovinBanner(

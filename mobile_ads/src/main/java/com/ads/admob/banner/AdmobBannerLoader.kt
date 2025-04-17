@@ -3,8 +3,8 @@ package com.ads.admob.banner
 import android.content.Context
 import android.os.Bundle
 import com.ads.banner.loader.BannerLoader
-import com.ads.banner.model.BannerAd
-import com.ads.banner.model.banner.AdmobBannerConfig
+import com.ads.banner.model.banner.BannerAd
+import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.banner.model.banner.BannerAdConfig
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener

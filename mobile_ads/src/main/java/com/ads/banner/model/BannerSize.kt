@@ -1,4 +1,4 @@
-package com.ads.banner.model.banner
+package com.ads.banner.model
 
 sealed class BannerSize(val width: Int, val height: Int) {
     data object Banner : BannerSize(320, 50)

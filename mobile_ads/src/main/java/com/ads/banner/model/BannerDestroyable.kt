@@ -1,4 +1,4 @@
-package com.ads.banner.model.banner
+package com.ads.banner.model
 
 interface BannerDestroyable {
     fun destroy()

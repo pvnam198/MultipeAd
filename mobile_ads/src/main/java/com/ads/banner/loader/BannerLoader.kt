@@ -1,6 +1,6 @@
 package com.ads.banner.loader
 
-import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.BannerAdConfig
 
 interface BannerLoader<T> {
     fun fetchBannerAd(

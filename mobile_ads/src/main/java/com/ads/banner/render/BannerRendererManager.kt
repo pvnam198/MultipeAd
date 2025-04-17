@@ -1,6 +1,6 @@
 package com.ads.banner.render
 
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerResult
 
 class BannerRendererManager {
 

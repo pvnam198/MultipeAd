@@ -2,7 +2,7 @@ package com.ads.applovin.banner
 
 import android.widget.FrameLayout
 import com.ads.banner.loader.BannerLoader
-import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.BannerAdConfig
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError

@@ -1,7 +1,7 @@
 package com.ads.admob.banner
 
-import com.ads.banner.model.banner.BannerSize
-import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.BannerSize
+import com.ads.banner.model.BannerAdConfig
 
 data class AdmobBannerConfig(
     override val adUnitId: String,

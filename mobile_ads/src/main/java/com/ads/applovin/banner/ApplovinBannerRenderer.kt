@@ -1,7 +1,7 @@
 package com.ads.applovin.banner
 
 import android.view.View
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerResult
 import com.ads.banner.render.BannerRenderer
 
 class ApplovinBannerRenderer(

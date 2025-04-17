@@ -1,10 +1,10 @@
 package com.ads.admob.banner
 
 import android.view.View
-import com.ads.banner.model.banner.BannerDestroyable
-import com.ads.banner.model.banner.BannerPauseAble
-import com.ads.banner.model.banner.BannerResumeAble
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerDestroyable
+import com.ads.banner.model.BannerPauseAble
+import com.ads.banner.model.BannerResumeAble
+import com.ads.banner.model.BannerResult
 
 class AdmobBannerResult(
     val adView: View,

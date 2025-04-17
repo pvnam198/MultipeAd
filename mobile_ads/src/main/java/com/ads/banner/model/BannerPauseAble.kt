@@ -1,4 +1,4 @@
-package com.ads.banner.model.banner
+package com.ads.banner.model
 
 interface BannerPauseAble {
     fun pause()

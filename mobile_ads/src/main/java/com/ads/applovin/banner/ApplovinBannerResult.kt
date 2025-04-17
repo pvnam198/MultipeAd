@@ -1,8 +1,8 @@
 package com.ads.applovin.banner
 
 import android.view.View
-import com.ads.banner.model.banner.BannerDestroyable
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerDestroyable
+import com.ads.banner.model.BannerResult
 
 class ApplovinBannerResult(
     val adView: View,

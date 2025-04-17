@@ -12,12 +12,12 @@ import com.ads.admob.banner.AdmobBannerRenderer
 import com.ads.applovin.banner.ApplovinBannerRenderer
 import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.manager.BannerAdManager
-import com.ads.banner.model.banner.BannerDestroyable
-import com.ads.banner.model.banner.BannerPauseAble
-import com.ads.banner.model.banner.BannerResumeAble
+import com.ads.banner.model.BannerDestroyable
+import com.ads.banner.model.BannerPauseAble
+import com.ads.banner.model.BannerResumeAble
 import com.ads.admob.banner.AdmobBannerConfig
-import com.ads.banner.model.banner.BannerAdConfig
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.BannerResult
 import com.ads.applovin.banner.ApplovinBannerConfig
 import com.ads.banner.render.BannerRendererManager
 import com.wz.multipead.databinding.ActivityMainBinding
@@ -49,9 +49,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        bannerAdManager = BannerAdManagerImpl(this, listOf(AdNetworkType.APPLOVIN))
-        val bannerAdConfig = getMaxBannerConfig(binding.flBannerAd)
-        bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = { result ->
+        val adNetworkConfigs: List<Pair<AdNetworkType, BannerAdConfig>> = listOf(
+            AdNetworkType.ADMOB to getAdmobBannerConfig(),
+            AdNetworkType.APPLOVIN to getMaxBannerConfig(binding.flBannerAd)
+        )
+        bannerAdManager = BannerAdManagerImpl(this, adNetworkConfigs)
+        bannerAdManager.fetchBannerAd(onSuccess = { result ->
             binding.tvBannerAdIsLoading.visibility = View.GONE
             binding.flBannerAd.visibility = View.VISIBLE
             val bannerRendererManager = BannerRendererManager()

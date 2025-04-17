@@ -6,28 +6,25 @@ import com.ads.admob.banner.AdmobBannerLoader
 import com.ads.admob.banner.AdmobBannerResult
 import com.ads.applovin.banner.ApplovinBannerLoader
 import com.ads.applovin.banner.ApplovinBannerResult
-import com.ads.banner.model.banner.BannerAdConfig
-import com.ads.banner.model.banner.BannerResult
+import com.ads.banner.model.BannerAdConfig
+import com.ads.banner.model.BannerResult
 import com.google.android.gms.ads.AdView
 
 class BannerAdManagerImpl(
     private val context: Context,
-    private val adNetworkPriorities: List<AdNetworkType>
+    private val adNetworkConfigs: List<Pair<AdNetworkType, BannerAdConfig>>
 ) : BannerAdManager {
 
     override fun fetchBannerAd(
-        config: BannerAdConfig,
         onSuccess: (BannerResult) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-
-        val iterator = adNetworkPriorities.iterator()
-        tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+        val iterator = adNetworkConfigs.iterator()
+        tryNextAdNetwork(iterator, onSuccess, onFailure)
     }
 
     private fun tryNextAdNetwork(
-        iterator: Iterator<AdNetworkType>,
-        config: BannerAdConfig,
+        iterator: Iterator<Pair<AdNetworkType, BannerAdConfig>>,
         onSuccess: (BannerResult) -> Unit,
         onFailure: (String?) -> Unit
     ) {
@@ -36,15 +33,16 @@ class BannerAdManagerImpl(
             return
         }
 
-        when (iterator.next()) {
+        val (adNetwork, config) = iterator.next()
+        when (adNetwork) {
             AdNetworkType.ADMOB -> {
                 loadAdmobBanner(config, onSuccess) { error ->
-                    tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+                    tryNextAdNetwork(iterator, onSuccess, onFailure)
                 }
             }
             AdNetworkType.APPLOVIN -> {
                 loadApplovinBanner(config, onSuccess) { error ->
-                    tryNextAdNetwork(iterator, config, onSuccess, onFailure)
+                    tryNextAdNetwork(iterator, onSuccess, onFailure)
                 }
             }
         }
@@ -56,8 +54,7 @@ class BannerAdManagerImpl(
         onFailure: (String?) -> Unit
     ) {
         ApplovinBannerLoader().fetchBannerAd(config, onSuccess = { ad ->
-            val applovinBannerResult =
-                ApplovinBannerResult(ad, onDestroy = { ad.destroy() })
+            val applovinBannerResult = ApplovinBannerResult(ad, onDestroy = { ad.destroy() })
             onSuccess(applovinBannerResult)
         }, onFailure)
     }

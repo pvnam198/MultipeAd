@@ -19,7 +19,7 @@ import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.banner.model.banner.BannerAdConfig
 import com.ads.banner.model.banner.BannerResult
 import com.ads.applovin.banner.ApplovinBannerConfig
-import com.ads.banner.model.banner.render.BannerRendererManager
+import com.ads.banner.render.BannerRendererManager
 import com.wz.multipead.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

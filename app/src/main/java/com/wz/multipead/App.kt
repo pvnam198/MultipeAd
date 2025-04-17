@@ -5,8 +5,6 @@ import com.ads.AdInitializationManagerImpl
 import com.ads.AdInitializer
 import com.ads.admob.AdMobAdInitializer
 import com.ads.applovin.AppLovinAdInitializer
-import com.ads.config.ConfigReader
-import com.ads.config.ConfigReaderImpl
 
 class App : Application() {
 
@@ -16,31 +14,32 @@ class App : Application() {
     }
 
     private fun initializeAds() {
-        val configReader: ConfigReader = ConfigReaderImpl(this)
         val initializers = ArrayList<AdInitializer>()
-        getMaxAdInitializer(configReader)?.let { initializers.add(it) }
+        getMaxAdInitializer()?.let { initializers.add(it) }
 
-        val adMobAdInitializer = AdMobAdInitializer(context = this)
-        initializers.add(adMobAdInitializer)
+        getAdmobInitializer()?.let {
+            initializers.add(it)
+        }
 
         val adInitializationManager =
             AdInitializationManagerImpl(initializers)
         adInitializationManager.initialize()
     }
 
-    private fun getMaxAdInitializer(configReader: ConfigReader): AdInitializer? {
-        val sdkKey = configReader.readProperty("applovin.sdk.key") ?: return null
-
-        val testDeviceIds = configReader.readProperty("applovin.test.device.ids")
-            ?.split(",")
-            ?.map { it.trim() }
-            .orEmpty()
+    private fun getMaxAdInitializer(): AdInitializer? {
+        val sdkKey =
+            "sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU"
+        val testDeviceIds = listOf("7ce2ea31-04ca-4dbf-93b0-bc98e690e3b4")
 
         return AppLovinAdInitializer(
             context = this,
             sdkKey = sdkKey,
             testDeviceIds = testDeviceIds
         )
+    }
+
+    private fun getAdmobInitializer(): AdInitializer? {
+        return AdMobAdInitializer(context = this)
     }
 
 }

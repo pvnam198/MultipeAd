@@ -1,14 +1,14 @@
 package com.ads.banner.manager
 
-import com.ads.banner.model.BannerAd
 import com.ads.banner.model.banner.BannerAdConfig
+import com.ads.banner.model.banner.BannerResult
 
 interface IBannerAdManager {
 
     fun fetchBannerAd(
         config: BannerAdConfig,
-        onSuccess: (BannerAd<*>) -> Unit,
-        onFailure: (msg: String?) -> Unit
+        onSuccess: (BannerResult) -> Unit,
+        onFailure: (String?) -> Unit
     )
 
 }

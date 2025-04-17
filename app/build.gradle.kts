@@ -14,7 +14,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.wz.multipead"
+        applicationId = "com.photorecovery.filerecovery.restorefile"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

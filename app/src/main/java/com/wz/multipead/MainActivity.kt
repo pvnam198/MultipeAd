@@ -18,9 +18,6 @@ import com.ads.banner.model.banner.AdmobBannerConfig
 import com.ads.banner.model.banner.BannerAdConfig
 import com.ads.banner.model.banner.MaxBannerConfig
 import com.applovin.mediation.ads.MaxAdView
-import com.applovin.sdk.AppLovinMediationProvider
-import com.applovin.sdk.AppLovinSdk
-import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.google.android.gms.ads.AdView
 import com.wz.multipead.databinding.ActivityMainBinding
 
@@ -44,14 +41,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val initConfig = AppLovinSdkInitializationConfiguration.builder(
-            "sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU",
-            this
-        ).setMediationProvider(AppLovinMediationProvider.MAX)
-            .build()
-        AppLovinSdk.getInstance(this).initialize(initConfig) { sdkConfig -> }
-
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -63,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         bannerAdManager = BannerAdManager(this, AdNetworkType.APPLOVIN)
         val bannerAdConfig = getMaxBannerConfig(binding.flBannerAd)
         bannerAdManager.fetchBannerAd(config = bannerAdConfig, onSuccess = {
+            binding.flBannerAd.visibility = View.VISIBLE
             bannerAd = it
 
             when (val ad = bannerAd?.ad) {

@@ -8,7 +8,4 @@ interface BannerLoader<T> {
         onSuccess: (T) -> Unit,
         onFailure: (msg: String?) -> Unit
     )
-
-
-
 }

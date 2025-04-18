@@ -8,7 +8,7 @@ import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxAdView
 
-class ApplovinBannerLoader() : BannerLoader<MaxAdView> {
+class ApplovinBannerLoader : BannerLoader<MaxAdView> {
 
     override fun fetchBannerAd(
         config: BannerAdConfig,
@@ -16,7 +16,7 @@ class ApplovinBannerLoader() : BannerLoader<MaxAdView> {
         onFailure: (String?) -> Unit
     ) {
         if (config !is ApplovinBannerConfig) {
-            onFailure("BannerAdConfig must be of type MaxBannerConfig")
+            onFailure("BannerAdConfig must be MaxBannerConfig")
             return
         }
 

@@ -1,6 +1,5 @@
 package com.ads.admob.banner
 
-import android.content.Context
 import android.os.Bundle
 import com.ads.banner.loader.BannerLoader
 import com.ads.banner.model.BannerAdConfig
@@ -11,10 +10,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 
-class AdmobBannerLoader(
-    private val context: Context
-) : BannerLoader<AdView> {
-
+class AdmobBannerLoader : BannerLoader<AdView> {
 
     override fun fetchBannerAd(
         config: BannerAdConfig,
@@ -22,11 +18,11 @@ class AdmobBannerLoader(
         onFailure: (String?) -> Unit
     ) {
         if (config !is AdmobBannerConfig) {
-            onFailure("BannerAdConfig is must be AdmobBannerConfig")
+            onFailure("BannerAdConfig must be AdmobBannerConfig")
             return
         }
 
-        val adView = AdView(context)
+        val adView = AdView(config.context)
         adView.setAdSize(AdSize(config.adSize.width, config.adSize.height))
         adView.adUnitId = config.adUnitId
         adView.adListener = object : AdListener() {

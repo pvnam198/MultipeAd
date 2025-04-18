@@ -1,0 +1,3 @@
+package com.ads.interstitial.presenter
+
+interface InterstitialPresenterConfig

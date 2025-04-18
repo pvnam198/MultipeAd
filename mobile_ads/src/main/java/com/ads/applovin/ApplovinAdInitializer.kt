@@ -1,7 +1,7 @@
 package com.ads.applovin
 
 import android.content.Context
-import com.ads.AdInitializer
+import com.ads.initializer.AdInitializer
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration

@@ -1,4 +1,4 @@
-package com.ads
+package com.ads.initializer
 
 class AdInitializationManagerImpl(
     private val initializers: List<AdInitializer>

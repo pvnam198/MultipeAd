@@ -4,6 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <FrameLayout
@@ -20,5 +21,12 @@
             android:text="Banner ad is loading..." />
 
     </FrameLayout>
+
+    <Button
+        android:id="@+id/btn_show_interstitial_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:text="Show Interstitial Ad" />
 
 </LinearLayout>

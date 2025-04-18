@@ -1,7 +1,7 @@
 package com.ads.admob
 
 import android.content.Context
-import com.ads.AdInitializer
+import com.ads.initializer.AdInitializer
 import com.google.android.gms.ads.MobileAds
 
 class AdMobAdInitializer(

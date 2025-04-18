@@ -1,4 +1,4 @@
-package com.ads
+package com.ads.initializer
 
 interface AdInitializer {
     fun initialize()

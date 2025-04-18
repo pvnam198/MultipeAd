@@ -1,8 +1,8 @@
 package com.wz.multipead
 
 import android.app.Application
-import com.ads.AdInitializationManagerImpl
-import com.ads.AdInitializer
+import com.ads.initializer.AdInitializationManagerImpl
+import com.ads.initializer.AdInitializer
 import com.ads.admob.AdMobAdInitializer
 import com.ads.applovin.ApplovinAdInitializer
 

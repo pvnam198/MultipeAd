@@ -1,5 +1,5 @@
 package com.ads.banner.model
 
-interface BannerAdConfig {
-    val adUnitId: String
-}
+import com.ads.model.AdConfig
+
+interface BannerAdConfig : AdConfig

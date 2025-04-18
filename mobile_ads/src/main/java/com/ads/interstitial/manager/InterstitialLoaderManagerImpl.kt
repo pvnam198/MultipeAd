@@ -19,22 +19,24 @@ class InterstitialLoaderManagerImpl(
     ) {
         val iterator = adNetworkConfigs.iterator()
         val failures = mutableListOf<InterstitialFailure>()
-        tryNextAdNetwork(iterator, onComplete = {
-            onComplete(it)
+        tryNextAdNetwork(iterator, onComplete = { interstitialAdPresenter ->
+            if (interstitialAdPresenter != null) {
+                onComplete(interstitialAdPresenter)
+            } else {
+                onFailure(failures)
+            }
         }, onFailure = {
             failures.add(it)
         })
-        if (failures.isNotEmpty()) {
-            onFailure(failures)
-        }
     }
 
     private fun tryNextAdNetwork(
         iterator: Iterator<Pair<AdNetworkType, InterstitialAdConfig>>,
-        onComplete: (InterstitialAdPresenter) -> Unit,
-        onFailure: (InterstitialFailure) -> Unit
+        onComplete: (InterstitialAdPresenter?) -> Unit,
+        onFailure: (InterstitialFailure) -> Unit,
     ) {
         if (!iterator.hasNext()) {
+            onComplete(null)
             return
         }
 

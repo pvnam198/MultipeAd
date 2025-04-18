@@ -1,4 +1,4 @@
-package com.ads.applovin.presenter
+package com.ads.applovin.interstitial.presenter
 
 import android.app.Activity
 import com.ads.interstitial.presenter.InterstitialPresenterConfig

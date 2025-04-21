@@ -1,11 +1,15 @@
 package com.ads.admob.nativead.presenter
 
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import com.ads.nativead.presenter.NativeAdPresenter
 import com.ads.nativead.presenter.NativeAdPresenterConfig
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdView
+import com.lib.mobileads.R
 
 class AdmobNativeAdPresenter(
     private val nativeAd: NativeAd
@@ -15,108 +19,46 @@ class AdmobNativeAdPresenter(
         config: NativeAdPresenterConfig,
         onFailure: () -> Unit
     ) {
-
-        Log.d("log_test_123123131", "AdmobNativeAdPresenter show")
-
         if (config !is AdmobNativeAdPresenterConfig) {
-            Log.d(
-                "log_test_123123131",
-                "AdmobNativeAdPresenter config !is AdmobNativeAdPresenterConfig"
-            )
             onFailure()
             return
         }
 
         if (!config.shouldShow) {
-            Log.d("log_test_123123131", "AdmobNativeAdPresenter !config.shouldShow")
             onFailure()
             return
         }
-        Log.d("log_test_123123131", "AdmobNativeAdPresenter create NativeAdView")
 
-        val textView = TextView(config.context)
-        textView.text = "This is native ad"
+        // adContainer là CustomAdmobNativeView → có nativeAdView bên trong
+        val adContainer = config.adContainer
+        val nativeAdView = adContainer.getNativeAdView()
 
-        config.adContainer.addView(textView)
+        // Tìm các view con từ layout do app cung cấp
+        nativeAdView.headlineView = nativeAdView.findViewById(R.id.ad_headline)
+        nativeAdView.bodyView = nativeAdView.findViewById(R.id.ad_body)
+        nativeAdView.callToActionView = nativeAdView.findViewById(R.id.ad_call_to_action)
+        nativeAdView.iconView = nativeAdView.findViewById(R.id.ad_app_icon)
+        nativeAdView.priceView = nativeAdView.findViewById(R.id.ad_price)
+        nativeAdView.starRatingView = nativeAdView.findViewById(R.id.ad_stars)
+        nativeAdView.storeView = nativeAdView.findViewById(R.id.ad_store)
+        nativeAdView.advertiserView = nativeAdView.findViewById(R.id.ad_advertiser)
 
+        // Gán dữ liệu từ nativeAd
+        (nativeAdView.headlineView as? TextView)?.text = nativeAd.headline
+        (nativeAdView.bodyView as? TextView)?.text = nativeAd.body
+        (nativeAdView.callToActionView as? Button)?.text = nativeAd.callToAction
+        (nativeAdView.iconView as? ImageView)?.setImageDrawable(nativeAd.icon?.drawable)
+        (nativeAdView.priceView as? TextView)?.text = nativeAd.price
+        (nativeAdView.starRatingView as? RatingBar)?.rating = nativeAd.starRating?.toFloat() ?: 0f
+        (nativeAdView.storeView as? TextView)?.text = nativeAd.store
+        (nativeAdView.advertiserView as? TextView)?.text = nativeAd.advertiser
 
-//        val adView = NativeAdView(config.context)
-//        config.adHeadline?.let {
-//            adView.headlineView = it
-//            it.text = nativeAd.headline
-//        }
-//        config.adBody?.let {
-//            adView.bodyView = it
-//            val body = nativeAd.body
-//            if (body != null) {
-//                it.text = nativeAd.body
-//            } else {
-//
-//            }
-//        }
-//        config.adCallToAction?.let {
-//            adView.callToActionView = it
-//            val callToAction = nativeAd.callToAction
-//            if (callToAction != null) {
-//                it.text = nativeAd.callToAction
-//            } else {
-//
-//            }
-//        }
-//        config.adIcon?.let {
-//            adView.iconView = it
-//            val icon = nativeAd.icon
-//            if (icon != null) {
-//                it.setImageDrawable(icon.drawable)
-//            } else {
-//
-//            }
-//        }
-//        config.adPrice?.let {
-//            adView.priceView = it
-//            val price = nativeAd.price
-//            if (price != null) {
-//                it.text = nativeAd.price
-//            } else {
-//
-//            }
-//        }
-//        config.adStars?.let {
-//            adView.starRatingView = it
-//            val starRating = nativeAd.starRating
-//            if (starRating != null) {
-//                it.rating = starRating.toFloat()
-//            } else {
-//            }
-//        }
-//        config.adStore?.let {
-//            adView.storeView = it
-//            val store = nativeAd.store
-//            if (store != null) {
-//                it.text = nativeAd.store
-//            } else {
-//
-//            }
-//        }
-//        config.adAdvertiser?.let {
-//            adView.advertiserView = it
-//            val advertiser = nativeAd.advertiser
-//            if (advertiser != null) {
-//                it.text = nativeAd.advertiser
-//            } else {
-//
-//            }
-//        }
-//        config.adMediaView?.let {
-//            adView.mediaView = it.mediaView
-//            val mediaContent = nativeAd.mediaContent
-//            if (mediaContent != null) {
-//                it.mediaView.mediaContent = mediaContent
-//            } else {
-//
-//            }
-//        }
-//        config.adContainer.addView(adView)
+        // MediaView đặc biệt
+        val mediaWrapper = nativeAdView.findViewById<AdmobMediaView>(R.id.ad_media)
+        mediaWrapper?.mediaView?.mediaContent = nativeAd.mediaContent
+        nativeAdView.mediaView = mediaWrapper?.mediaView
+
+        // Gắn NativeAd vào NativeAdView
+        nativeAdView.setNativeAd(nativeAd)
     }
-
 }

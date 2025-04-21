@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 import com.ads.nativead.presenter.CustomNativeView
 import com.google.android.gms.ads.nativead.NativeAdView
-import com.lib.mobileads.R
 
 class CustomAdmobNativeView @JvmOverloads constructor(
     context: Context,
@@ -14,19 +14,17 @@ class CustomAdmobNativeView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr), CustomNativeView {
 
-    private val nativeAdView: NativeAdView
+    private val nativeAdView = NativeAdView(context)
 
     init {
-        val view = LayoutInflater.from(context).inflate(
-            R.layout.custom_admob_native_view,
-            this,
-            true
-        )
-        nativeAdView = view as NativeAdView // Root là NativeAdView
+        removeAllViews()
+        addView(nativeAdView)
     }
 
-    // Trả về NativeAdView để sử dụng trong AdmobHolder
-    fun getNativeAdView(): NativeAdView {
-        return nativeAdView
+    fun setAdLayout(@LayoutRes layoutId: Int) {
+        nativeAdView.removeAllViews()
+        LayoutInflater.from(context).inflate(layoutId, nativeAdView, true)
     }
+
+    fun getNativeAdView(): NativeAdView = nativeAdView
 }

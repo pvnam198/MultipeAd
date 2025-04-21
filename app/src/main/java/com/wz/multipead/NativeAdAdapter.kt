@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ads.admob.nativead.presenter.AdmobNativeAdPresenter
 import com.ads.admob.nativead.presenter.AdmobNativeAdPresenterConfig
+import com.ads.admob.nativead.presenter.CustomAdmobNativeView
 import com.ads.applovin.nativead.presenter.ApplovinNativeAdPresenter
 import com.ads.nativead.presenter.NativeAdPresenter
 import com.wz.multipead.databinding.AdmobNativeViewBinding
-import com.wz.multipead.databinding.ItemAdmobNativeBinding
 import com.wz.multipead.databinding.ItemApplovinNativeBinding
 
 class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -43,13 +43,9 @@ class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     ): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_ADMOB -> {
-                val binding =
-                    ItemAdmobNativeBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                return AdmobHolder(binding)
+                val view = CustomAdmobNativeView(parent.context)
+                view.setAdLayout(R.layout.admob_native_view)
+                return AdmobHolder(view)
             }
 
             TYPE_APPLOVIN -> {
@@ -79,41 +75,25 @@ class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return nativeAdPresenters.size
     }
 
-    inner class AdmobHolder(private val binding: ItemAdmobNativeBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class AdmobHolder(private val view: CustomAdmobNativeView) :
+        RecyclerView.ViewHolder(view) {
 
         fun bind(nativeAdPresenter: NativeAdPresenter) {
             val context = itemView.context
             val shouldShow = true
-            val adContainer = itemView as ViewGroup
-            val admobNativeViewBinding =
-                AdmobNativeViewBinding.inflate(LayoutInflater.from(context), binding.root, false)
-            val adHeadline = admobNativeViewBinding.adHeadline
-            val adMediaView = admobNativeViewBinding.adMedia
-            val bodyTextView = admobNativeViewBinding.adBody
-            val callToActionTextView = admobNativeViewBinding.adCallToAction
-            val iconImageView = admobNativeViewBinding.adAppIcon
-            val priceTextView = admobNativeViewBinding.adPrice
-            val starsRatingBar = admobNativeViewBinding.adStars
-            val storeTextView = admobNativeViewBinding.adStore
-            val advertiserTextView = admobNativeViewBinding.adAdvertiser
-            val admobNativeAdPresenterConfig = AdmobNativeAdPresenterConfig(
+
+            // Tạo config với adContainer
+            val config = AdmobNativeAdPresenterConfig(
                 context = context,
                 shouldShow = shouldShow,
-                adContainer = adContainer,
-                adMediaView = adMediaView,
-                adHeadline = adHeadline,
-                adBody = bodyTextView,
-                adCallToAction = callToActionTextView,
-                adIcon = iconImageView,
-                adPrice = priceTextView,
-                adStars = starsRatingBar,
-                adStore = storeTextView,
-                adAdvertiser = advertiserTextView
+                adContainer = view
             )
-            nativeAdPresenter.show(config = admobNativeAdPresenterConfig) { }
-        }
 
+            // Gọi presenter để hiển thị quảng cáo
+            nativeAdPresenter.show(config = config) {
+                Log.e("AdmobHolder", "Failed to show ad")
+            }
+        }
     }
 
     inner class ApplovinHolder(private val binding: ItemApplovinNativeBinding) :

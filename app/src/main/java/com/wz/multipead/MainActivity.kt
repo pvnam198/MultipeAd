@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             nativeAdManager.getNativePresenter()?.let { nativeAdAdapter.add(it) }
             getAndSetNativeAd(nativeAdManager, nativeAdAdapter)
-        }, 2000)
+        }, 10000)
     }
 
     private fun initInterstitialAd() {

@@ -1,6 +1,8 @@
 package com.wz.multipead
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -12,10 +14,12 @@ import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.admob.banner.AdmobBannerRenderer
 import com.ads.admob.interstitial.model.AdmobInterstitialAdConfig
 import com.ads.admob.interstitial.presenter.AdmobInterstitialPresenterConfig
+import com.ads.admob.nativead.model.AdmobNativeConfig
 import com.ads.applovin.banner.ApplovinBannerConfig
 import com.ads.applovin.banner.ApplovinBannerRenderer
 import com.ads.applovin.interstitial.model.ApplovinInterstitialAdConfig
-import com.ads.applovin.presenter.ApplovinInterstitialPresenterConfig
+import com.ads.applovin.interstitial.presenter.ApplovinInterstitialPresenterConfig
+import com.ads.applovin.nativead.model.ApplovinNativeConfig
 import com.ads.banner.manager.BannerAdManager
 import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.model.BannerAdConfig
@@ -28,6 +32,9 @@ import com.ads.interstitial.manager.InterstitialManager
 import com.ads.interstitial.manager.InterstitialManagerImpl
 import com.ads.interstitial.model.InterstitialAdConfig
 import com.ads.model.AdNetworkType
+import com.ads.nativead.manager.NativeAdManager
+import com.ads.nativead.manager.NativeAdManagerImpl
+import com.ads.nativead.model.NativeConfig
 import com.wz.multipead.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -64,23 +71,59 @@ class MainActivity : AppCompatActivity() {
         }
         initBannerAd()
         initInterstitialAd()
+        initNativeAd()
+    }
+
+    private fun initNativeAd() {
+        val nativeAdConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
+            AdNetworkType.ADMOB to AdmobNativeConfig(
+                adUnitId = "ca-app-pub-3940256099942544/2247696110",
+                context = this,
+                shouldLoad = true
+            ),
+            AdNetworkType.APPLOVIN to ApplovinNativeConfig(
+                adUnitId = "0c56d5a8f8b7f64a",
+                this
+            ),
+        )
+
+        val nativeAdManager: NativeAdManager = NativeAdManagerImpl(nativeAdConfigs)
+        nativeAdManager.load()
+
+        val nativeAdAdapter = NativeAdAdapter()
+        binding.rvNativeAds.adapter = nativeAdAdapter
+        getAndSetNativeAd(nativeAdManager, nativeAdAdapter)
+    }
+
+    private fun getAndSetNativeAd(
+        nativeAdManager: NativeAdManager,
+        nativeAdAdapter: NativeAdAdapter
+    ) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            nativeAdManager.getNativePresenter()?.let { nativeAdAdapter.add(it) }
+            getAndSetNativeAd(nativeAdManager, nativeAdAdapter)
+        }, 15000)
     }
 
     private fun initInterstitialAd() {
         val adNetworkConfigs: List<Pair<AdNetworkType, InterstitialAdConfig>> = listOf(
-            AdNetworkType.APPLOVIN to ApplovinInterstitialAdConfig(
-                adUnitId = "2814aced6a3ada0a",
-                shouldLoad = true
-            ),
             AdNetworkType.ADMOB to AdmobInterstitialAdConfig(
                 adUnitId = "ca-app-pub-3940256099942544/1033173712",
                 context = this,
                 shouldLoad = true
-            )
+            ),
+            AdNetworkType.APPLOVIN to ApplovinInterstitialAdConfig(
+                adUnitId = "94e4dd1f78bdab66",
+                shouldLoad = true
+            ),
         )
 
         interstitialManager = InterstitialManagerImpl(adNetworkConfigs)
         interstitialManager.load()
+
+        binding.btnLaunchMediationDebugger.setOnClickListener {
+            (it.context.applicationContext as App).applovinAdInitializer?.showMediation()
+        }
 
         binding.btnShowInterstitialAd.setOnClickListener {
             interstitialManager.show(
@@ -99,7 +142,7 @@ class MainActivity : AppCompatActivity() {
     private fun initBannerAd() {
         val adNetworkConfigs: List<Pair<AdNetworkType, BannerAdConfig>> = listOf(
             AdNetworkType.ADMOB to getAdmobBannerConfig(),
-            AdNetworkType.APPLOVIN to getMaxBannerConfig(binding.flBannerAd)
+            AdNetworkType.APPLOVIN to getMaxBannerConfig(binding.flBannerAd),
         )
         bannerAdManager = BannerAdManagerImpl(adNetworkConfigs)
         bannerAdManager.fetchBannerAd(onSuccess = { result ->

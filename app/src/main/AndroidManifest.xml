@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".App"
@@ -15,6 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MultipeAd"
         tools:targetApi="31">
+
+        <meta-data android:name="applovin.sdk.key" android:value="sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU"/>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

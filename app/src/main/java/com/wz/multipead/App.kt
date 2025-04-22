@@ -8,6 +8,8 @@ import com.ads.applovin.ApplovinAdInitializer
 
 class App : Application() {
 
+    var applovinAdInitializer: ApplovinAdInitializer?= null
+
     override fun onCreate() {
         super.onCreate()
         initializeAds()
@@ -35,7 +37,7 @@ class App : Application() {
             context = this,
             sdkKey = sdkKey,
             testDeviceIds = testDeviceIds
-        )
+        ).apply { this@App.applovinAdInitializer = this }
     }
 
     private fun getAdmobInitializer(): AdInitializer? {

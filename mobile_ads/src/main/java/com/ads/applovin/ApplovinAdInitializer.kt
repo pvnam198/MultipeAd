@@ -19,9 +19,13 @@ class ApplovinAdInitializer(
                 .setMediationProvider(AppLovinMediationProvider.MAX)
                 .setTestDeviceAdvertisingIds(testDeviceIds)
                 .build()
-
         AppLovinSdk.getInstance(context).initialize(initConfig) { sdkConfig ->
             onInitializeComplete?.invoke()
         }
     }
+
+    fun showMediation() {
+        AppLovinSdk.getInstance(context).showMediationDebugger()
+    }
+
 }

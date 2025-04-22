@@ -28,9 +28,17 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation libs.androidx.constraintlayout
     implementation libs.adjust.android
     implementation libs.adjust.android.webbridge
     implementation libs.adjust.android.huawei.referrer

@@ -3,7 +3,7 @@ package com.ads.interstitial.manager
 import com.ads.admob.interstitial.loader.AdmobInterstitialLoader
 import com.ads.admob.interstitial.presenter.AdmobInterstitialAdPresenter
 import com.ads.applovin.interstitial.loader.ApplovinInterstitialLoader
-import com.ads.applovin.presenter.ApplovinInterstitialAdPresenter
+import com.ads.applovin.interstitial.presenter.ApplovinInterstitialAdPresenter
 import com.ads.interstitial.model.InterstitialAdConfig
 import com.ads.interstitial.model.InterstitialFailure
 import com.ads.interstitial.presenter.InterstitialAdPresenter

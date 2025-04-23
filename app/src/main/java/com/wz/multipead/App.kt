@@ -5,6 +5,9 @@ import com.ads.initializer.AdInitializationManagerImpl
 import com.ads.initializer.AdInitializer
 import com.ads.admob.AdMobAdInitializer
 import com.ads.applovin.ApplovinAdInitializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class App : Application() {
 
@@ -31,7 +34,7 @@ class App : Application() {
     private fun getMaxAdInitializer(): AdInitializer? {
         val sdkKey =
             "sJ15ca4POpBC2JHIEOf7xoye1fy55OxDDPQtcP2ced81fcJLVtTWhF3kT8vthO6xImtr946dol4twMiIkPmsrU"
-        val testDeviceIds = listOf("7ce2ea31-04ca-4dbf-93b0-bc98e690e3b4")
+        val testDeviceIds = listOf("17989b26-3f24-4db2-a176-abb5a51e2ecc")
 
         return ApplovinAdInitializer(
             context = this,

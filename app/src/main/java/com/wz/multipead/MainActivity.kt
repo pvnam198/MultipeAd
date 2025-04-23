@@ -15,11 +15,15 @@ import com.ads.admob.banner.AdmobBannerRenderer
 import com.ads.admob.interstitial.model.AdmobInterstitialAdConfig
 import com.ads.admob.interstitial.presenter.AdmobInterstitialPresenterConfig
 import com.ads.admob.nativead.model.AdmobNativeConfig
+import com.ads.admob.rewarded.model.AdmobRewardedAdConfig
+import com.ads.admob.rewarded.presenter.AdmobRewardedPresenterConfig
 import com.ads.applovin.banner.ApplovinBannerConfig
 import com.ads.applovin.banner.ApplovinBannerRenderer
 import com.ads.applovin.interstitial.model.ApplovinInterstitialAdConfig
 import com.ads.applovin.interstitial.presenter.ApplovinInterstitialPresenterConfig
 import com.ads.applovin.nativead.model.ApplovinNativeConfig
+import com.ads.applovin.rewarded.model.ApplovinRewardedAdConfig
+import com.ads.applovin.rewarded.presenter.ApplovinRewardedPresenterConfig
 import com.ads.banner.manager.BannerAdManager
 import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.model.BannerAdConfig
@@ -35,6 +39,11 @@ import com.ads.model.AdNetworkType
 import com.ads.nativead.manager.NativeAdManager
 import com.ads.nativead.manager.NativeAdManagerImpl
 import com.ads.nativead.model.NativeConfig
+import com.ads.rewarded.manager.RewardedManager
+import com.ads.rewarded.manager.RewardedManagerImpl
+import com.ads.rewarded.model.RewardedAdConfig
+import com.ads.rewarded.presenter.RewardedAdFailed
+import com.ads.rewarded.presenter.UserEarnedReward
 import com.wz.multipead.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -47,10 +56,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var interstitialManager: InterstitialManager
 
+    private lateinit var rewardedManager: RewardedManager
+
     private fun getAdmobBannerConfig(): BannerAdConfig {
         return AdmobBannerConfig(
-            adUnitId = "ca-app-pub-3940256099942544/6300978111",
-            context = this
+            adUnitId = "ca-app-pub-3940256099942544/6300978111", context = this
         )
     }
 
@@ -72,20 +82,63 @@ class MainActivity : AppCompatActivity() {
         initBannerAd()
         initInterstitialAd()
         initNativeAd()
+        initRewardAd()
     }
+
+    private fun initRewardAd() {
+        val rewardedAdConfigs: List<Pair<AdNetworkType, RewardedAdConfig>> = listOf(
+            AdNetworkType.APPLOVIN to ApplovinRewardedAdConfig(
+                adUnitId = "9e39151540f3ffda", true
+            ),
+
+            AdNetworkType.ADMOB to AdmobRewardedAdConfig(
+                adUnitId = "ca-app-pub-3940256099942544/5224354917", this, true
+            )
+        )
+
+        rewardedManager = RewardedManagerImpl(rewardedAdConfigs)
+        rewardedManager.load()
+
+        binding.btnShowRewardedAd.setOnClickListener {
+            rewardedManager.show(
+                listOf(
+                    ApplovinRewardedPresenterConfig(activity = this, shouldShow = true),
+                    AdmobRewardedPresenterConfig(activity = this, shouldShow = true)
+                ), onComplete = {
+                    when (it) {
+                        is UserEarnedReward -> {
+                            Toast.makeText(this, "Reward Earned", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is RewardedAdFailed -> {
+                            Toast.makeText(this, "Reward Failed", Toast.LENGTH_SHORT).show()
+                        }
+
+                        else -> {
+                            Toast.makeText(this, "Reward Failed", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                    rewardedManager.load()
+                })
+
+        }
+    }
+
 
     private fun initNativeAd() {
         val nativeAdConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
+            AdNetworkType.APPLOVIN to ApplovinNativeConfig(
+                adUnitId = "0c56d5a8f8b7f64a", this
+            ),
             AdNetworkType.ADMOB to AdmobNativeConfig(
                 adUnitId = "ca-app-pub-3940256099942544/2247696110",
                 context = this,
                 shouldLoad = true
             ),
-            AdNetworkType.APPLOVIN to ApplovinNativeConfig(
-                adUnitId = "0c56d5a8f8b7f64a",
-                this
-            ),
-        )
+
+
+            )
 
         val nativeAdManager: NativeAdManager = NativeAdManagerImpl(nativeAdConfigs)
         nativeAdManager.load()
@@ -96,8 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAndSetNativeAd(
-        nativeAdManager: NativeAdManager,
-        nativeAdAdapter: NativeAdAdapter
+        nativeAdManager: NativeAdManager, nativeAdAdapter: NativeAdAdapter
     ) {
         Handler(Looper.getMainLooper()).postDelayed({
             nativeAdManager.getNativePresenter()?.let { nativeAdAdapter.add(it) }
@@ -113,8 +165,7 @@ class MainActivity : AppCompatActivity() {
                 shouldLoad = true
             ),
             AdNetworkType.APPLOVIN to ApplovinInterstitialAdConfig(
-                adUnitId = "94e4dd1f78bdab66",
-                shouldLoad = true
+                adUnitId = "94e4dd1f78bdab66", shouldLoad = true
             ),
         )
 
@@ -130,12 +181,10 @@ class MainActivity : AppCompatActivity() {
                 listOf(
                     ApplovinInterstitialPresenterConfig(activity = this, shouldShow = true),
                     AdmobInterstitialPresenterConfig(activity = this, shouldShow = true)
-                ),
-                onComplete = {
+                ), onComplete = {
                     Toast.makeText(this, "Interstitial ad completed", Toast.LENGTH_SHORT).show()
                     interstitialManager.load()
-                }
-            )
+                })
         }
     }
 

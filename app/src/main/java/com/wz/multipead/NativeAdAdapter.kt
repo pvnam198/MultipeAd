@@ -9,6 +9,7 @@ import com.ads.admob.nativead.presenter.CustomAdmobNativeView
 import com.ads.applovin.nativead.presenter.CustomMaxNativeView
 import com.ads.applovin.nativead.presenter.MaxNativeAdPresenter
 import com.ads.applovin.nativead.presenter.MaxNativeAdPresenterConfig
+import com.ads.nativead.model.DisplayableNativeAd
 import com.ads.nativead.presenter.NativeAdPresenter
 
 class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -76,18 +77,18 @@ class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bind(nativeAdPresenter: NativeAdPresenter) {
             val context = itemView.context
             val shouldShow = true
-
-            // Tạo config với adContainer
             val config = AdmobNativeAdPresenterConfig(
                 context = context,
                 shouldShow = shouldShow,
                 adContainer = view
             )
-
-            // Gọi presenter để hiển thị quảng cáo
-            nativeAdPresenter.show(config = config) {
-                Log.e("AdmobHolder", "Failed to show ad")
-            }
+            DisplayableNativeAd.show(
+                presenter = nativeAdPresenter,
+                config = config,
+                onFailure = { msg ->
+                    Log.e("AdmobHolder", "Failed to show ad: $msg")
+                }
+            )
         }
     }
 
@@ -104,11 +105,13 @@ class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 shouldShow = shouldShow,
                 adContainer = view
             )
-
-            nativeAdPresenter.show(config = config) {
-                Log.e("ApplovinHolder", "Failed to show ad")
-            }
-
+            DisplayableNativeAd.show(
+                presenter = nativeAdPresenter,
+                config = config,
+                onFailure = { msg ->
+                    Log.e("AdmobHolder", "Failed to show ad: $msg")
+                }
+            )
         }
 
     }

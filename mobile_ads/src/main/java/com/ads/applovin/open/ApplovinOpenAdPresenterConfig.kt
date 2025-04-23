@@ -1,11 +1,9 @@
-package com.ads.admob.interstitial.presenter
+package com.ads.applovin.open
 
-import android.app.Activity
 import com.ads.open.presenter.OpenAdPresenterConfig
 import com.ads.open.presenter.OpenAdPresenterListener
 
-class AdmobOpenAdPresenterConfig(
-    val activity: Activity,
+class ApplovinOpenAdPresenterConfig(
     val openAdPresenterListener: OpenAdPresenterListener
 ) : OpenAdPresenterConfig {
     override fun onShowAdComplete(msg: String?) {

@@ -18,7 +18,7 @@ class AdmobOpenAdPresenter(
     override fun show(config: OpenAdPresenterConfig, onComplete: () -> Unit) {
 
         if (config !is AdmobOpenAdPresenterConfig) {
-            config.onShowAdComplete()
+            config.onShowAdComplete("OpenAdPresenterConfig must be AdmobOpenAdPresenterConfig")
             return
         }
 
@@ -26,12 +26,12 @@ class AdmobOpenAdPresenter(
         appOpenAd.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 super.onAdDismissedFullScreenContent()
-                config.onShowAdComplete()
+                config.onShowAdComplete("onAdDismissedFullScreenContent")
             }
 
             override fun onAdFailedToShowFullScreenContent(p0: AdError) {
                 super.onAdFailedToShowFullScreenContent(p0)
-                config.onShowAdComplete()
+                config.onShowAdComplete("onAdFailedToShowFullScreenContent, msg: ${p0.message}")
             }
         }
     }

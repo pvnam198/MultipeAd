@@ -1,5 +1,6 @@
 package com.ads.applovin.nativead.presenter
 
+import com.ads.nativead.model.DisplayableNativeAd
 import com.ads.nativead.presenter.NativeAdPresenter
 import com.ads.nativead.presenter.NativeAdPresenterConfig
 import com.applovin.mediation.MaxAd
@@ -8,7 +9,7 @@ import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 class MaxNativeAdPresenter(
     private val maxNativeAdLoader: MaxNativeAdLoader,
     private val maxAd: MaxAd
-) : NativeAdPresenter {
+) : NativeAdPresenter, DisplayableNativeAd {
 
     override fun show(
         config: NativeAdPresenterConfig,

@@ -14,12 +14,16 @@ import com.ads.admob.banner.AdmobBannerConfig
 import com.ads.admob.banner.AdmobBannerRenderer
 import com.ads.admob.interstitial.model.AdmobInterstitialAdConfig
 import com.ads.admob.interstitial.presenter.AdmobInterstitialPresenterConfig
+import com.ads.admob.interstitial.presenter.AdmobOpenAdPresenterConfig
 import com.ads.admob.nativead.model.AdmobNativeConfig
+import com.ads.admob.open.AdmobOpenAdConfig
 import com.ads.applovin.banner.ApplovinBannerConfig
 import com.ads.applovin.banner.ApplovinBannerRenderer
 import com.ads.applovin.interstitial.model.ApplovinInterstitialAdConfig
 import com.ads.applovin.interstitial.presenter.ApplovinInterstitialPresenterConfig
 import com.ads.applovin.nativead.model.ApplovinNativeConfig
+import com.ads.applovin.open.ApplovinOpenAdConfig
+import com.ads.applovin.open.ApplovinOpenAdPresenterConfig
 import com.ads.banner.manager.BannerAdManager
 import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.model.BannerAdConfig
@@ -35,6 +39,10 @@ import com.ads.model.AdNetworkType
 import com.ads.nativead.manager.NativeAdManager
 import com.ads.nativead.manager.NativeAdManagerImpl
 import com.ads.nativead.model.NativeConfig
+import com.ads.open.loader.OpenAdConfig
+import com.ads.open.manager.OpenAdManager
+import com.ads.open.manager.OpenAdManagerImpl
+import com.ads.open.presenter.OpenAdPresenterListener
 import com.wz.multipead.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -47,6 +55,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var interstitialManager: InterstitialManager
 
+    private lateinit var openAdManager: OpenAdManager
+
     private fun getAdmobBannerConfig(): BannerAdConfig {
         return AdmobBannerConfig(
             adUnitId = "ca-app-pub-3940256099942544/6300978111",
@@ -57,7 +67,6 @@ class MainActivity : AppCompatActivity() {
     private fun getMaxBannerConfig(parentView: ViewGroup): BannerAdConfig {
         return ApplovinBannerConfig(adUnitId = "2e627e3499187e00", parentView = parentView)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +81,42 @@ class MainActivity : AppCompatActivity() {
         initBannerAd()
         initInterstitialAd()
         initNativeAd()
+        initOpenAd()
+    }
+
+    private fun initOpenAd() {
+        val adConfigs: List<Pair<AdNetworkType, OpenAdConfig>> = listOf(
+            AdNetworkType.ADMOB to AdmobOpenAdConfig(
+                adUnitId = "ca-app-pub-3940256099942544/9257395921",
+                context = this
+            ),
+            AdNetworkType.APPLOVIN to ApplovinOpenAdConfig(
+                adUnitId = "dc3f9774772c3407",
+            ),
+        )
+        openAdManager = OpenAdManagerImpl(adConfigs)
+        openAdManager.load()
+
+        binding.btnShowOpenAd.setOnClickListener {
+            openAdManager.show(
+                listOf(
+                    AdmobOpenAdPresenterConfig(
+                        this,
+                        object : OpenAdPresenterListener {
+                            override fun onShowAdComplete(msg: String?) {
+                                Toast.makeText(this@MainActivity, "$msg", Toast.LENGTH_SHORT).show()
+                                openAdManager.load()
+                            }
+                        })
+                ), onComplete = {
+                    Toast.makeText(this, "Open ad completed", Toast.LENGTH_SHORT).show()
+                    openAdManager.load()
+                })
+        }
     }
 
     private fun initNativeAd() {
-        val nativeAdConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
+        val adConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
             AdNetworkType.ADMOB to AdmobNativeConfig(
                 adUnitId = "ca-app-pub-3940256099942544/2247696110",
                 context = this,
@@ -87,7 +128,7 @@ class MainActivity : AppCompatActivity() {
             ),
         )
 
-        val nativeAdManager: NativeAdManager = NativeAdManagerImpl(nativeAdConfigs)
+        val nativeAdManager: NativeAdManager = NativeAdManagerImpl(adConfigs)
         nativeAdManager.load()
 
         val nativeAdAdapter = NativeAdAdapter()

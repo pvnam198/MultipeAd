@@ -1,7 +1,7 @@
-package com.ads.interstitial.manager
+package com.ads.interstitial.loader
 
-import com.ads.model.AdFailure
 import com.ads.interstitial.presenter.InterstitialAdPresenter
+import com.ads.model.AdFailure
 
 interface InterstitialLoaderManager {
     fun load(

@@ -1,12 +1,13 @@
-package com.ads.interstitial.manager
+package com.ads.interstitial.loader
 
 import com.ads.admob.interstitial.loader.AdmobInterstitialLoader
 import com.ads.admob.interstitial.presenter.AdmobInterstitialAdPresenter
 import com.ads.applovin.interstitial.loader.ApplovinInterstitialLoader
 import com.ads.applovin.interstitial.presenter.ApplovinInterstitialAdPresenter
+import com.ads.interstitial.loader.InterstitialLoaderManager
 import com.ads.interstitial.model.InterstitialAdConfig
-import com.ads.model.AdFailure
 import com.ads.interstitial.presenter.InterstitialAdPresenter
+import com.ads.model.AdFailure
 import com.ads.model.AdNetworkType
 
 class InterstitialLoaderManagerImpl(

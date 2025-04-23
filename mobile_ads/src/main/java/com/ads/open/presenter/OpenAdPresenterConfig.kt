@@ -1,5 +1,5 @@
 package com.ads.open.presenter
 
 interface OpenAdPresenterConfig {
-    fun onShowAdComplete()
+    fun onShowAdComplete(msg: String?)
 }

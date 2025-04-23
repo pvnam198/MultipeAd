@@ -2,6 +2,6 @@ package com.ads.open.presenter
 
 interface OpenAdPresenterListener {
 
-    fun onShowAdComplete()
+    fun onShowAdComplete(msg: String?)
 
 }

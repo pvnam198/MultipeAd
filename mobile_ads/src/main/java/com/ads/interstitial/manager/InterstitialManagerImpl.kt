@@ -1,6 +1,8 @@
 package com.ads.interstitial.manager
 
 import android.util.Log
+import com.ads.interstitial.loader.InterstitialLoaderManager
+import com.ads.interstitial.loader.InterstitialLoaderManagerImpl
 import com.ads.interstitial.model.InterstitialAdConfig
 import com.ads.model.AdFailure
 import com.ads.interstitial.presenter.InterstitialAdPresenter

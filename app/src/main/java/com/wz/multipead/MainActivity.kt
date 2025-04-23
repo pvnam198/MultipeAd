@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 shouldLoad = true
             ),
             AdNetworkType.APPLOVIN to ApplovinNativeConfig(
-                adUnitId = "0c56d5a8f8b7f64a",
+                adUnitId = "202fad7ccc3a236b",
                 this
             ),
         )

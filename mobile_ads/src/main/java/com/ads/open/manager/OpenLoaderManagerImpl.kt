@@ -1,20 +1,18 @@
-package com.ads.interstitial.manager
+package com.ads.open.manager
 
-import com.ads.admob.interstitial.loader.AdmobInterstitialLoader
-import com.ads.admob.interstitial.presenter.AdmobInterstitialAdPresenter
-import com.ads.applovin.interstitial.loader.ApplovinInterstitialLoader
-import com.ads.applovin.interstitial.presenter.ApplovinInterstitialAdPresenter
+import com.ads.admob.open.AdmobOpenAdLoader
 import com.ads.interstitial.model.InterstitialAdConfig
 import com.ads.model.AdFailure
-import com.ads.interstitial.presenter.InterstitialAdPresenter
 import com.ads.model.AdNetworkType
+import com.ads.open.loader.OpenAdConfig
+import com.ads.open.presenter.OpenAdPresenter
 
-class InterstitialLoaderManagerImpl(
-    private val adNetworkConfigs: List<Pair<AdNetworkType, InterstitialAdConfig>>
-) : InterstitialLoaderManager {
+class OpenLoaderManagerImpl(
+    private val adNetworkConfigs: List<Pair<AdNetworkType, OpenAdConfig>>
+) : OpenLoaderManager {
 
     override fun load(
-        onComplete: (InterstitialAdPresenter) -> Unit,
+        onComplete: (OpenAdPresenter) -> Unit,
         onFailure: (List<AdFailure>) -> Unit
     ) {
         val iterator = adNetworkConfigs.iterator()
@@ -31,8 +29,8 @@ class InterstitialLoaderManagerImpl(
     }
 
     private fun tryNextAdNetwork(
-        iterator: Iterator<Pair<AdNetworkType, InterstitialAdConfig>>,
-        onComplete: (InterstitialAdPresenter?) -> Unit,
+        iterator: Iterator<Pair<AdNetworkType, OpenAdConfig>>,
+        onComplete: (OpenAdPresenter?) -> Unit,
         onFailure: (AdFailure) -> Unit,
     ) {
         if (!iterator.hasNext()) {
@@ -59,25 +57,24 @@ class InterstitialLoaderManagerImpl(
     }
 
     private fun loadAdmobInterstitial(
-        config: InterstitialAdConfig,
-        onComplete: (InterstitialAdPresenter) -> Unit,
+        config: OpenAdConfig,
+        onComplete: (OpenAdPresenter) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        AdmobInterstitialLoader().fetchInterstitialAd(config, onSuccess = { interstitialAd ->
-            val presenter = AdmobInterstitialAdPresenter(interstitialAd)
+        AdmobOpenAdLoader().load(config, onSuccess = { presenter ->
             onComplete(presenter)
         }, onFailure)
     }
 
     private fun loadApplovinInterstitial(
-        config: InterstitialAdConfig,
-        onComplete: (InterstitialAdPresenter) -> Unit,
+        config: OpenAdConfig,
+        onComplete: (OpenAdPresenter) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        ApplovinInterstitialLoader().fetchInterstitialAd(config, onSuccess = { interstitialAd ->
-            val presenter = ApplovinInterstitialAdPresenter(interstitialAd)
-            onComplete(presenter)
-        }, onFailure)
+//        ApplovinInterstitialLoader().fetchInterstitialAd(config, onSuccess = { interstitialAd ->
+//            val presenter = ApplovinInterstitialAdPresenter(interstitialAd)
+//            onComplete(presenter)
+//        }, onFailure)
     }
 
 }

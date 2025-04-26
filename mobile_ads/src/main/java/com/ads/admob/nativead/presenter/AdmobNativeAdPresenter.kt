@@ -4,14 +4,26 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import com.ads.model.AdUnitIdProvider
+import com.ads.nativead.listener.NativeAdCloseListener
+import com.ads.nativead.model.DisplayableNativeAd
+import com.ads.nativead.presenter.CloseableNativeAd
 import com.ads.nativead.presenter.NativeAdPresenter
 import com.ads.nativead.presenter.NativeAdPresenterConfig
+import com.ads.open.presenter.ReleasableNativeAd
 import com.google.android.gms.ads.nativead.NativeAd
 import com.lib.mobileads.R
 
 class AdmobNativeAdPresenter(
-    private val nativeAd: NativeAd
-) : NativeAdPresenter {
+    private val nativeAd: NativeAd,
+    override val adUnitId: String
+) : NativeAdPresenter,
+    DisplayableNativeAd,
+    CloseableNativeAd,
+    ReleasableNativeAd,
+    AdUnitIdProvider {
+
+    override var adCloseListener: NativeAdCloseListener? = null
 
     override fun show(
         config: NativeAdPresenterConfig,
@@ -58,5 +70,13 @@ class AdmobNativeAdPresenter(
 
         // Gắn NativeAd vào NativeAdView
         nativeAdView.setNativeAd(nativeAd)
+    }
+
+    override fun onAdClosed() {
+        adCloseListener?.onAdClosed()
+    }
+
+    override fun release() {
+        nativeAd.destroy()
     }
 }

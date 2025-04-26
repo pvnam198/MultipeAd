@@ -1,8 +1,10 @@
 package com.ads.interstitial.manager
 
 import android.util.Log
+import com.ads.interstitial.loader.InterstitialLoaderManager
+import com.ads.interstitial.loader.InterstitialLoaderManagerImpl
 import com.ads.interstitial.model.InterstitialAdConfig
-import com.ads.interstitial.model.InterstitialFailure
+import com.ads.model.AdFailure
 import com.ads.interstitial.presenter.InterstitialAdPresenter
 import com.ads.interstitial.presenter.InterstitialPresenterConfig
 import com.ads.model.AdNetworkType
@@ -46,7 +48,7 @@ class InterstitialManagerImpl(
         )
     }
 
-    private fun logInterstitialFailures(failures: List<InterstitialFailure>) {
+    private fun logInterstitialFailures(failures: List<AdFailure>) {
         failures.forEach { failure ->
             Log.e(
                 "fata_interstitial", """

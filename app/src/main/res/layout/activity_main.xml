@@ -44,6 +44,12 @@
         android:layout_marginHorizontal="16dp"
         android:text="Show Rewarded Ad" />
 
+    <Button
+        android:id="@+id/btn_show_open_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:text="Show Open Ad" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_native_ads"

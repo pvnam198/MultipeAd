@@ -59,8 +59,13 @@ class ApplovinNativeLoader : NativeAdLoader<MaxNativeAdPresenter> {
 
             override fun onNativeAdLoaded(maxNativeAdView: MaxNativeAdView?, maxAd: MaxAd) {
                 super.onNativeAdLoaded(maxNativeAdView, maxAd)
-                Log.d("ApplovinNativeLoader", "onNativeAdLoaded: $maxAd")
-                onSuccess(MaxNativeAdPresenter(nativeAdLoader, maxAd))
+                onSuccess(
+                    MaxNativeAdPresenter(
+                        maxNativeAdLoader = nativeAdLoader,
+                        maxAd = maxAd,
+                        adUnitId = config.adUnitId
+                    )
+                )
             }
         })
 

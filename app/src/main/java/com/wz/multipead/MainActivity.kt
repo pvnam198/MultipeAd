@@ -23,7 +23,6 @@ import com.ads.applovin.interstitial.model.ApplovinInterstitialAdConfig
 import com.ads.applovin.interstitial.presenter.ApplovinInterstitialPresenterConfig
 import com.ads.applovin.nativead.model.ApplovinNativeConfig
 import com.ads.applovin.open.ApplovinOpenAdConfig
-import com.ads.applovin.open.ApplovinOpenAdPresenterConfig
 import com.ads.banner.manager.BannerAdManager
 import com.ads.banner.manager.BannerAdManagerImpl
 import com.ads.banner.model.BannerAdConfig
@@ -39,6 +38,7 @@ import com.ads.model.AdNetworkType
 import com.ads.nativead.manager.NativeAdManager
 import com.ads.nativead.manager.NativeAdManagerImpl
 import com.ads.nativead.model.NativeConfig
+import com.ads.nativead.model.getter.NativeAdByIdGetter
 import com.ads.open.loader.OpenAdConfig
 import com.ads.open.manager.OpenAdManager
 import com.ads.open.manager.OpenAdManagerImpl
@@ -141,7 +141,10 @@ class MainActivity : AppCompatActivity() {
         nativeAdAdapter: NativeAdAdapter
     ) {
         Handler(Looper.getMainLooper()).postDelayed({
-            nativeAdManager.getNativePresenter()?.let { nativeAdAdapter.add(it) }
+            val presenter =
+                nativeAdManager.getNativePresenter(NativeAdByIdGetter("ca-app-pub-3940256099942544/2247696110"))
+                    ?: nativeAdManager.getNativePresenter()
+            presenter?.let { nativeAdAdapter.add(it) }
             getAndSetNativeAd(nativeAdManager, nativeAdAdapter)
         }, 15000)
     }

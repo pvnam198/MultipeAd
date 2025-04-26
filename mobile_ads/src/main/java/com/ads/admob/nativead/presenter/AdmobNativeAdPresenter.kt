@@ -4,8 +4,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import com.ads.nativead.model.DisplayableNativeAd
+import com.ads.model.AdUnitIdProvider
 import com.ads.nativead.listener.NativeAdCloseListener
+import com.ads.nativead.model.DisplayableNativeAd
 import com.ads.nativead.presenter.CloseableNativeAd
 import com.ads.nativead.presenter.NativeAdPresenter
 import com.ads.nativead.presenter.NativeAdPresenterConfig
@@ -14,8 +15,13 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.lib.mobileads.R
 
 class AdmobNativeAdPresenter(
-    private val nativeAd: NativeAd
-) : NativeAdPresenter, DisplayableNativeAd, CloseableNativeAd, ReleasableNativeAd {
+    private val nativeAd: NativeAd,
+    override val adUnitId: String
+) : NativeAdPresenter,
+    DisplayableNativeAd,
+    CloseableNativeAd,
+    ReleasableNativeAd,
+    AdUnitIdProvider {
 
     override var adCloseListener: NativeAdCloseListener? = null
 

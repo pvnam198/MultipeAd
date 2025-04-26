@@ -28,7 +28,8 @@ class AdmobNativeAdLoader : NativeAdLoader<AdmobNativeAdPresenter> {
 
         val adLoader = AdLoader.Builder(config.context, config.adUnitId)
             .forNativeAd { ad: NativeAd ->
-                admobNativeAdPresenter = AdmobNativeAdPresenter(ad)
+                admobNativeAdPresenter =
+                    AdmobNativeAdPresenter(nativeAd = ad, adUnitId = config.adUnitId)
                 onSuccess(admobNativeAdPresenter)
             }
             .withAdListener(object : AdListener() {

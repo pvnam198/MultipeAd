@@ -3,7 +3,10 @@ package com.ads.nativead.manager
 import com.ads.admob.nativead.loader.AdmobNativeAdLoader
 import com.ads.applovin.nativead.loader.ApplovinNativeLoader
 import com.ads.model.AdNetworkType
+import com.ads.model.AdUnitIdProvider
 import com.ads.nativead.model.NativeConfig
+import com.ads.nativead.model.getter.NativeAdByIdGetter
+import com.ads.nativead.model.getter.NativeAdGetter
 import com.ads.nativead.presenter.NativeAdPresenter
 
 class NativeAdManagerImpl(
@@ -22,8 +25,22 @@ class NativeAdManagerImpl(
         })
     }
 
-    override fun getNativePresenter(): NativeAdPresenter? {
-        val nativeAdPresenter = nativeAdPresenters.removeFirstOrNull()
+    override fun getNativePresenter(nativeAdGetter: NativeAdGetter?): NativeAdPresenter? {
+        var nativeAdPresenter: NativeAdPresenter? = null
+
+        if (nativeAdGetter is NativeAdByIdGetter) {
+            val presenter =
+                nativeAdPresenters.find { it is AdUnitIdProvider && it.adUnitId == nativeAdGetter.adUnitId }
+
+            if (presenter != null) {
+                nativeAdPresenter = presenter
+                nativeAdPresenters.remove(presenter)
+            }
+
+        } else {
+            nativeAdPresenter = nativeAdPresenters.removeFirstOrNull()
+        }
+
         load()
         return nativeAdPresenter
     }

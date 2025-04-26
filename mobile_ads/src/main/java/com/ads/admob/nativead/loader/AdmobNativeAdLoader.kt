@@ -24,15 +24,24 @@ class AdmobNativeAdLoader : NativeAdLoader<AdmobNativeAdPresenter> {
             return
         }
 
+        var admobNativeAdPresenter: AdmobNativeAdPresenter? = null
+
         val adLoader = AdLoader.Builder(config.context, config.adUnitId)
             .forNativeAd { ad: NativeAd ->
-                onSuccess(AdmobNativeAdPresenter(ad))
+                admobNativeAdPresenter = AdmobNativeAdPresenter(ad)
+                onSuccess(admobNativeAdPresenter)
             }
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(p0: LoadAdError) {
                     super.onAdFailedToLoad(p0)
                     onFailure(p0.message)
                 }
+
+                override fun onAdClosed() {
+                    super.onAdClosed()
+                    admobNativeAdPresenter?.onAdClosed()
+                }
+
             })
             .withNativeAdOptions(
                 NativeAdOptions.Builder()

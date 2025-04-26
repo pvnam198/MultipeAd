@@ -1,6 +1,7 @@
 package com.wz.multipead
 
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ads.admob.nativead.presenter.AdmobNativeAdPresenter
@@ -9,8 +10,11 @@ import com.ads.admob.nativead.presenter.CustomAdmobNativeView
 import com.ads.applovin.nativead.presenter.CustomMaxNativeView
 import com.ads.applovin.nativead.presenter.MaxNativeAdPresenter
 import com.ads.applovin.nativead.presenter.MaxNativeAdPresenterConfig
+import com.ads.nativead.listener.NativeAdCloseListener
 import com.ads.nativead.model.DisplayableNativeAd
+import com.ads.nativead.presenter.CloseableNativeAd
 import com.ads.nativead.presenter.NativeAdPresenter
+import com.ads.nativead.presenter.NativeAdPresenterConfig
 
 class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -71,49 +75,66 @@ class NativeAdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return nativeAdPresenters.size
     }
 
-    inner class AdmobHolder(private val view: CustomAdmobNativeView) :
-        RecyclerView.ViewHolder(view) {
+    abstract inner class BasePresenterHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(nativeAdPresenter: NativeAdPresenter) {
+        abstract fun getNativeAdPresenterConfig(): NativeAdPresenterConfig
+
+        open fun setCloseListener(nativeAdPresenter: NativeAdPresenter) {
+            if (nativeAdPresenter is CloseableNativeAd) {
+                nativeAdPresenter.adCloseListener = object : NativeAdCloseListener {
+                    override fun onAdClosed() {
+                        handleAdClosed()
+                    }
+                }
+            }
+        }
+
+        open fun handleAdClosed() {
+            Log.d("AdmobHolder", "onAdClosed: ")
+        }
+
+        open fun handleAdShowFailed(msg: String?) {
+            Log.d("AdmobHolder", "handleAdShowFailed: $msg")
+        }
+
+        open fun bind(nativeAdPresenter: NativeAdPresenter) {
+
+            setCloseListener(nativeAdPresenter)
+
+            DisplayableNativeAd.show(
+                presenter = nativeAdPresenter,
+                config = getNativeAdPresenterConfig(),
+                onFailure = { msg ->
+                    handleAdShowFailed(msg)
+                }
+            )
+        }
+
+    }
+
+    inner class AdmobHolder(private val view: CustomAdmobNativeView) : BasePresenterHolder(view) {
+        override fun getNativeAdPresenterConfig(): NativeAdPresenterConfig {
             val context = itemView.context
             val shouldShow = true
-            val config = AdmobNativeAdPresenterConfig(
+            return AdmobNativeAdPresenterConfig(
                 context = context,
                 shouldShow = shouldShow,
                 adContainer = view
-            )
-            DisplayableNativeAd.show(
-                presenter = nativeAdPresenter,
-                config = config,
-                onFailure = { msg ->
-                    Log.e("AdmobHolder", "Failed to show ad: $msg")
-                }
             )
         }
     }
 
-    inner class ApplovinHolder(private val view: CustomMaxNativeView) :
-        RecyclerView.ViewHolder(view) {
-
-        fun bind(nativeAdPresenter: NativeAdPresenter) {
-
+    inner class ApplovinHolder(private val view: CustomMaxNativeView) : BasePresenterHolder(view) {
+        override fun getNativeAdPresenterConfig(): NativeAdPresenterConfig {
             val context = itemView.context
             val shouldShow = true
 
-            val config = MaxNativeAdPresenterConfig(
+            return MaxNativeAdPresenterConfig(
                 context = context,
                 shouldShow = shouldShow,
                 adContainer = view
             )
-            DisplayableNativeAd.show(
-                presenter = nativeAdPresenter,
-                config = config,
-                onFailure = { msg ->
-                    Log.e("AdmobHolder", "Failed to show ad: $msg")
-                }
-            )
         }
-
     }
 
 }

@@ -1,9 +1,7 @@
 package com.ads.rewarded.manager
 
 import com.ads.admob.rewarded.loader.AdmobRewardedLoader
-import com.ads.admob.rewarded.presenter.AdmobRewardedAdPresenter
 import com.ads.applovin.rewarded.loader.ApplovinRewardedLoader
-import com.ads.applovin.rewarded.presenter.ApplovinRewardedAdPresenter
 import com.ads.model.AdNetworkType
 import com.ads.rewarded.model.RewardedAdConfig
 import com.ads.rewarded.model.RewardedFailure
@@ -62,8 +60,7 @@ class RewardedLoaderManagerImpl(
         onComplete: (RewardedAdPresenter) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        AdmobRewardedLoader().fetchRewardedAd(config, onSuccess = { rewardedAd ->
-            val presenter = AdmobRewardedAdPresenter(rewardedAd)
+        AdmobRewardedLoader().fetchRewardedAd(config, onSuccess = { presenter ->
             onComplete(presenter)
         }, onFailure)
     }
@@ -73,8 +70,7 @@ class RewardedLoaderManagerImpl(
         onComplete: (RewardedAdPresenter) -> Unit,
         onFailure: (String?) -> Unit
     ) {
-        ApplovinRewardedLoader().fetchRewardedAd(config, onSuccess = { rewardedAd ->
-            val presenter = ApplovinRewardedAdPresenter(rewardedAd)
+        ApplovinRewardedLoader().fetchRewardedAd(config, onSuccess = { presenter ->
             onComplete(presenter)
         }, onFailure)
     }

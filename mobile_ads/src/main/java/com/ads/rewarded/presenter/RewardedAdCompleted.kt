@@ -1,3 +1,3 @@
 package com.ads.rewarded.presenter
 
-class RewardedAdCompleted : RewardedAdResponse
+class RewardedAdCompleted(val isUserRewarded: Boolean = false) : RewardedAdResponse

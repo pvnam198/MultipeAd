@@ -3,6 +3,7 @@ package com.wz.multipead
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -50,6 +51,7 @@ import com.ads.open.presenter.OpenAdPresenterListener
 import com.ads.rewarded.manager.RewardedManager
 import com.ads.rewarded.manager.RewardedManagerImpl
 import com.ads.rewarded.model.RewardedAdConfig
+import com.ads.rewarded.presenter.RewardedAdCompleted
 import com.ads.rewarded.presenter.RewardedAdFailed
 import com.ads.rewarded.presenter.UserEarnedReward
 import com.wz.multipead.databinding.ActivityMainBinding
@@ -131,10 +133,9 @@ class MainActivity : AppCompatActivity() {
             AdNetworkType.APPLOVIN to ApplovinRewardedAdConfig(
                 adUnitId = "9e39151540f3ffda", true
             ),
-
             AdNetworkType.ADMOB to AdmobRewardedAdConfig(
                 adUnitId = "ca-app-pub-3940256099942544/5224354917", this, true
-            )
+            ),
         )
 
         rewardedManager = RewardedManagerImpl(rewardedAdConfigs)
@@ -145,7 +146,8 @@ class MainActivity : AppCompatActivity() {
                 listOf(
                     ApplovinRewardedPresenterConfig(activity = this, shouldShow = true),
                     AdmobRewardedPresenterConfig(activity = this, shouldShow = true)
-                ), onComplete = {
+                ), responseCallback = {
+                    Log.d("log_test_reward", "initRewardAd responseCallback: $it")
                     when (it) {
                         is UserEarnedReward -> {
                             Toast.makeText(this, "Reward Earned", Toast.LENGTH_SHORT).show()
@@ -155,12 +157,15 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this, "Reward Failed", Toast.LENGTH_SHORT).show()
                         }
 
-                        else -> {
-                            Toast.makeText(this, "Reward Failed", Toast.LENGTH_SHORT).show()
+                        is RewardedAdCompleted -> {
+                            if (it.isUserRewarded) {
+                                Toast.makeText(this, "RewardedAdCompleted Earned", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "RewardedAdCompleted Not Earned", Toast.LENGTH_SHORT).show()
+                            }
+                            rewardedManager.load()
                         }
-
                     }
-                    rewardedManager.load()
                 })
 
         }

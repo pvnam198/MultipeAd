@@ -17,18 +17,17 @@ class RewardedManagerImpl(
 
     override fun show(
         configs: List<RewardedPresenterConfig>,
-        onComplete: (RewardedAdResponse) -> Unit
+        responseCallback: (RewardedAdResponse) -> Unit
     ) {
 
         val rewardedAd =
-            rewardedAdPresenter ?: return onComplete(RewardedAdFailed("Rewarded Ad Not Found"))
+            rewardedAdPresenter
+                ?: return responseCallback(RewardedAdFailed("Rewarded Ad Not Found"))
+        rewardedAdPresenter = null
 
         configs.forEach {
             if (rewardedAd.canShow(it)) {
-                rewardedAd.show(it, onResponse = { response ->
-                    rewardedAdPresenter = null
-                    onComplete(response)
-                })
+                rewardedAd.show(it, onResponse = responseCallback)
                 return
             }
         }

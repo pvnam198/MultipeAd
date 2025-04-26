@@ -24,16 +24,17 @@ class AdmobRewardedAdPresenter(
         if (config !is AdmobRewardedPresenterConfig) return onResponse(RewardedAdFailed("RewardedPresenterConfig must be AdmobRewardedPresenterConfig"))
         if (!config.shouldShow) return onResponse(RewardedAdFailed("Should show is false"))
 
+        var isUserRewarded = false
         rewardedAd.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {
             }
 
             override fun onAdDismissedFullScreenContent() {
-                onResponse(RewardedAdCompleted())
+                onResponse(RewardedAdCompleted(isUserRewarded))
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                onResponse(RewardedAdFailed(adError.message))
+                onResponse(RewardedAdCompleted(isUserRewarded))
             }
 
             override fun onAdImpression() {
@@ -45,6 +46,7 @@ class AdmobRewardedAdPresenter(
 
         rewardedAd.show(config.activity, object : OnUserEarnedRewardListener {
             override fun onUserEarnedReward(p0: RewardItem) {
+                isUserRewarded = true
                 onResponse(UserEarnedReward())
             }
         })

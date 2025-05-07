@@ -53,4 +53,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":mobile_ads"))
+
+    implementation ("com.applovin.mediation:bytedance-adapter:7.1.0.7.0")
+    implementation ("com.applovin.mediation:mintegral-adapter:16.9.71.0")
+    implementation ("com.applovin.mediation:google-adapter:23.6.0.1")
+
 }

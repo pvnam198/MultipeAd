@@ -174,13 +174,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNativeAd() {
         val adConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
-            AdNetworkType.ADMOB to AdmobNativeConfig(
-                adUnitId = "ca-app-pub-3940256099942544/2247696110",
-                context = this,
-                shouldLoad = true
-            ),
+//            AdNetworkType.ADMOB to AdmobNativeConfig(
+//                adUnitId = "ca-app-pub-3940256099942544/2247696110",
+//                context = this,
+//                shouldLoad = true
+//            ),
             AdNetworkType.APPLOVIN to ApplovinNativeConfig(
-                adUnitId = "202fad7ccc3a236b",
+                adUnitId = "bd3a40a8507ae038",
                 this
             ),
         )

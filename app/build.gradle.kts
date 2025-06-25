@@ -54,8 +54,20 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":mobile_ads"))
 
-    implementation ("com.applovin.mediation:bytedance-adapter:7.1.0.7.0")
-    implementation ("com.applovin.mediation:mintegral-adapter:16.9.71.0")
-    implementation ("com.applovin.mediation:google-adapter:23.6.0.1")
+//    implementation ("com.applovin.mediation:bytedance-adapter:7.2.0.5.0")
+//    implementation ("com.applovin.mediation:mintegral-adapter:16.9.71.0")
+//    implementation ("com.applovin.mediation:google-adapter:23.6.0.1")
+//    implementation ("com.applovin.mediation:vungle-adapter:7.5.0.0")
+//    implementation ("com.applovin.mediation:facebook-adapter:6.20.0.0")
+
+//
+//    implementation  ("com.google.ads.mediation:applovin:13.3.1.0")
+//    implementation  ("com.google.ads.mediation:vungle:7.5.0.0")
+//    implementation  ("com.google.ads.mediation:facebook:6.20.0.0")
+//    implementation  ("com.google.ads.mediation:mintegral:16.9.71.0")
+//    implementation  ("com.google.ads.mediation:pangle:7.2.0.6.0")
+
+
+
 
 }

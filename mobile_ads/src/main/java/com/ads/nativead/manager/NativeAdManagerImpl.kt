@@ -14,6 +14,7 @@ class NativeAdManagerImpl(
 ) : NativeAdManager {
 
     private val nativeAdPresenters = ArrayDeque<NativeAdPresenter>()
+    private val admobLoader = AdmobNativeAdLoader(nativeAdPresenters)
 
     override fun load() {
         val iterator = nativeAdConfigs.iterator()
@@ -58,7 +59,7 @@ class NativeAdManagerImpl(
 
         when (adNetwork) {
             AdNetworkType.ADMOB -> {
-                AdmobNativeAdLoader().load(config = config, onSuccess = {
+                admobLoader.load(config = config, onSuccess = {
                     onComplete(it)
                 }, onFailure = {
                     tryNextAdNetwork(iterator, onComplete)

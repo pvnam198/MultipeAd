@@ -4,7 +4,8 @@ import android.content.Context
 import com.ads.nativead.model.NativeConfig
 
 class AdmobNativeConfig(
-    override val adUnitId: String,
+    val adUnitId: List<String>,
     val context: Context,
-    val shouldLoad: Boolean = true
+    val shouldLoad: Boolean = true,
+    val maxLoadNative: Int = 2
 ) : NativeConfig

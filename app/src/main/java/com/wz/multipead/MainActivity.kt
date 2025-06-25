@@ -174,19 +174,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNativeAd() {
         val adConfigs: List<Pair<AdNetworkType, NativeConfig>> = listOf(
-//            AdNetworkType.ADMOB to AdmobNativeConfig(
-//                adUnitId = "ca-app-pub-3940256099942544/2247696110",
-//                context = this,
-//                shouldLoad = true
-//            ),
-            AdNetworkType.APPLOVIN to ApplovinNativeConfig(
+            AdNetworkType.ADMOB to AdmobNativeConfig(
+                adUnitId = listOf(
+                    "ca-app-pub-3940256099942544/2247696110",
+                    "ca-app-pub-3940256099942544/2247696110",
+                    "ca-app-pub-3940256099942544/2247696112",
+                ),
+                context = this,
+                shouldLoad = true,
+                maxLoadNative = 2
+            ),
+           /* AdNetworkType.APPLOVIN to ApplovinNativeConfig(
                 adUnitId = "bd3a40a8507ae038",
                 this
-            ),
+            ),*/
         )
 
         val nativeAdManager: NativeAdManager = NativeAdManagerImpl(adConfigs)
         nativeAdManager.load()
+
+        binding.btnLoadNative.setOnClickListener {
+            nativeAdManager.getNativePresenter()
+        }
 
         val nativeAdAdapter = NativeAdAdapter()
         binding.rvNativeAds.adapter = nativeAdAdapter
